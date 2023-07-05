@@ -38,3 +38,7 @@
   box-shadow: none !important;
   text-align: center;
 }
+.App-Card a {
+  margin-right: 20px;
+  text-decoration: none !important;
+}
