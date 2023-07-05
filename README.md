@@ -6,6 +6,13 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 In the project directory, you can run:
 
+Clone the application
+
+To Install Dependecies
+
+### `npm install`
+
+To Run the application in local
 ### `npm start`
 
 Runs the app in the development mode.\
@@ -14,11 +21,13 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
+To test the application if you have any unit test cases
 ### `npm test`
 
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
+To build the Prod ready code
 ### `npm run build`
 
 Builds the app for production to the `build` folder.\
@@ -69,10 +78,17 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 
-material UI: https://mui.com/material-ui/react-menu/
+Reference Links:
 
-Component: Create small component as similar to student under components
+Material UI
+https://mui.com/material-ui/react-menu/
 
-PageRoutes: All route configuration will come under this file
+Note:
+
+Component: 
+Create small component as similar to student under components
+
+PageRoutes: 
+All route configuration will come under this file
 
 
