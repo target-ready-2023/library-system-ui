@@ -39,6 +39,7 @@
     ]
   },
   "devDependencies": {
+    "@mui/icons-material": "5.13.7",
     "react-router-dom": "^6.14.1"
   }
 }
