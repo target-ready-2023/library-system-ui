@@ -2,8 +2,8 @@ const Footer = () => {
   return (
     <>
       <footer className="App-footer">
-        <a href="">About US</a>
-        <a href="">Contact US</a>
+        <a href="/about">About US</a>
+        <a href="/contact">Contact US</a>
       </footer>
     </>
   );
