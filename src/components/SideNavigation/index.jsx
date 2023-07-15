@@ -23,6 +23,11 @@ const SideNavigation = () => {
     navigate('/student')
     handleClose()
   }
+  const handleBooksDirectory = () => {
+    navigate('/booksDirectory')
+    handleClose()
+  }
+  
   return (
     <>
       <Button
@@ -45,6 +50,7 @@ const SideNavigation = () => {
       >
         <MenuItem onClick={handleHome}>Home</MenuItem>
         <MenuItem onClick={handleStudent}>Student</MenuItem>
+        <MenuItem onClick={handleBooksDirectory}>Books Directory</MenuItem>
       </Menu>
     </>
   );
