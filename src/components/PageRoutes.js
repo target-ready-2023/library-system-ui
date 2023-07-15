@@ -4,6 +4,7 @@ import Home from "./Home"
 import About from "./About"
 import Contact from "./Contact"
 import NotFound from "./NotFound"
+import BooksDirectory from "./BooksDirectory"
 
 const PageRoutes = () => {
     return (
@@ -13,6 +14,7 @@ const PageRoutes = () => {
           <Route exact path="/contact" element={<Contact />} />
           <Route exact path="/student" element={<Student />} />
           <Route path='*' element={<NotFound />}/>
+          <Route path="/booksDirectory" element={<BooksDirectory />} />
         </Routes>
     )
   }
