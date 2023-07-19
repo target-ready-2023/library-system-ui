@@ -4,20 +4,20 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import './Layout.css'
-import { Button, Card, Divider, Icon, colors,Drawer, TextField } from '@mui/material';
-import { FormControl, FormLabel } from '@mui/material';
+import { Button, Icon, Drawer, TextField, Snackbar, Alert} from '@mui/material';
+import { FormLabel } from '@mui/material';
 import LocalLibraryIcon from '@mui/icons-material/LocalLibrary';  
 import HomeIcon from '@mui/icons-material/Home';
 import CategoryIcon from '@mui/icons-material/Category';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { Title } from '@mui/icons-material';
+
 
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: 'white',
     // ...theme.typography.body2,
-  padding: theme.spacing(5),
+  padding: theme.spacing(1),
   textAlign: 'center',
   color: 'black'
 }));
@@ -29,33 +29,56 @@ export default function RowAndColumnSpacing() {
 
     const [drawerOpen, setDrawerOpen] = useState(false);
 
+    
+      const [open, setOpen] = useState(false);
+    
+      // const handleClick = () => {
+      //   setOpen(true);
+      //   // handleSubmit();
+      // };
+    
+      const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+    
+        setOpen(false);
+      };
+    
+
     const toggleDrawer = () => {
       setDrawerOpen(!drawerOpen);
     };
 
-    const [output, setoutput] = useState('')
     const handleHome = () => {
         navigate('/')
         // handleClose()
       }
-      const handleAddBooks = () =>{
-        const output = navigate('/');
-        setoutput(output);
+      const handleCategory = () =>{
+        navigate('/category');
       }
       const handleSubmit = () => {
         // alert(`Name: ${name}, Email: ${email}`);
-        alert('Book added successfully!')
         setDrawerOpen(false);
+        setOpen(true);        
       };
   return (
-    <Grid container spacing={0} sx={{height:'90vh'}}>
+    <Grid container spacing={0}
+     sx={{height:'90vh'}}
+    >
       <Grid item xs={2}
       style={{backgroundColor:'#6c88c8'}}
       className='sidebar'
       >
         {/* Content for the left side */}
+                      <Grid 
+                      item xs={12} 
+                      p={2} 
+                      >
+                          <div><Item ><Icon><HomeIcon/></Icon><Button sx={{color:'black', fontSize:'15px', height:'50px', width:'70%', fontFamily:'TimesNewRoman'}} onClick={handleHome}>Books Directory</Button></Item></div>
+                      </Grid>
                       <Grid item xs={12} p={2} >
-                          <div><Item ><Icon><HomeIcon/></Icon><Button sx={{color:'black', fontSize:'15px', height:'50px', width:'70%', fontFamily:'TimesNewRoman'}} onClick={handleHome}>Books Directory</Button></Item>
+                          <div><Item ><Icon><LocalLibraryIcon/></Icon><Button sx={{color:'black', fontSize:'15px', height:'50px', width:'70%', fontFamily:'TimesNewRoman'}} onClick={toggleDrawer}>Add Books</Button></Item>
                           <Drawer
                             anchor="bottom"
                             open={drawerOpen}
@@ -100,22 +123,26 @@ export default function RowAndColumnSpacing() {
                                 Submit
                               </Button>
                             </Box>
-                          </Drawer></div>
+                          </Drawer>
+                          <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'right' }} open={open} autoHideDuration={3000} onClose={handleClose}>
+                              <Alert onClose={handleClose} severity='success' sx={{ width: '100%' }}>
+                                Book added successfully!
+                              </Alert>
+                            </Snackbar> 
+                          </div>
                       </Grid>
                       <Grid item xs={12} p={2} >
-                          <Item ><Icon><LocalLibraryIcon/></Icon><Button sx={{color:'black', fontSize:'15px', height:'50px', width:'70%', fontFamily:'TimesNewRoman'}} onClick={toggleDrawer}>Add Books</Button></Item>
-                      </Grid>
-                      <Grid item xs={12} p={2} >
-                          <Item ><Icon><CategoryIcon/></Icon><Button sx={{color:'black', fontSize:'15px', height:'50px', width:'70%', fontFamily:'TimesNewRoman'}}>Category</Button></Item>
+                          <Item ><Icon><CategoryIcon/></Icon><Button sx={{color:'black', fontSize:'15px', height:'50px', width:'70%', fontFamily:'TimesNewRoman'}} onClick={handleCategory}>Category</Button></Item>
                       </Grid>
       </Grid>
-      {/* <Grid item xs={10} md={3}>  */}
+      {/* <Grid className='rightGrid' > 
         {/* Content for the right side */}
-                      {/* <h2>Hello Jahnavi</h2> */}
+                      {/* <h2>Hello Jahnavi udhffiuhuishfdiuhsihjjckhuidhufhwiuhsiufs;jgouf</h2> */}
                   
       {/* </Grid> */}
+      
       <div className='display'>
       </div>
   </Grid>
-); 
+  ); 
 }
