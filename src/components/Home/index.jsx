@@ -1,14 +1,47 @@
-import { Card } from "@mui/material"
+import { Button, Card,Drawer,Box } from "@mui/material"
 import Carousel from 'react-material-ui-carousel'
 import React from 'react';
 import { Grid } from '@mui/material'
 import image1 from "../../images/image3.png"
 import image2 from "../../images/image2.png"
 import image3 from "../../images/image1.png"
-import './movingCarousal.css';
-
+import './home.css';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const Home = () => {
+  const [data, setData] = useState([]);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedBook, setSelectedBook] = useState(null);
+//    const name=selectedBook.bookName
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
+  };
+  const handleToggleDrawer = (item) => {
+    setSelectedBook(item);
+    setDrawerOpen(!drawerOpen);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/library_service_api/v1/getAllBooks`);
+        setData(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  
+
+
+
+
+
+
     // var items = [
         
     //     {
@@ -33,14 +66,92 @@ const Home = () => {
     //     }
 
     // ]
+    
 
     return (
         <div>
         <Card className="App-Card">
             <h3>Home</h3>
+            <div>
+                {data.map((item) => (
+                    <div>
+                      
+                    <p key={item.bookId} >
+                     <Button onClick={() => handleToggleDrawer(item)}  
+                     sx={{ width: '100%',
+                     height: '70px',
+                    // marginLeft:'10px',
+                     marginTop:'10px',
+                     textAlign: 'left',
+                     fontFamily:'TimesNewRoman',
+                     fontSize:'20px',
+                     padding:'10px'}}>
+                     <Box sx={{
+          backgroundColor: 'lightBlue',
+         //border: '2px solid black',
+          width: '84%',
+          height: '70px',
+          marginLeft:'210px',
+          marginTop:'5px',
+          textAlign: 'left',
+          fontFamily:'TimesNewRoman',
+          fontSize:'20px',
+          padding:'10px',
+          borderRadius: '5px',
+          boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
+          transition: 'transform 0.3s', // Add transition for smooth zoom effect
+          '&:hover': {
+            transform: 'scale(1.01)', // Zoom the box by 10% on hover
+          },
+           //position: 'fixed',
+        //   top: '500px',
+        //   left: '500px',
+        }}>
+                        {item.bookName}
+                        </Box>
+                     </Button>
+                    
+                     {/* sx={{
+                        top:'5px',
+                        left:'90%',
+                        display: 'flex',
+                        fontFamily:'TimesNewRoman',
+                        color:"black"}}
+                    
+                    <></>
+                     */}</p>
+                      
+                    </div> 
+                    ))}
+                    <Drawer
+                    anchor="right"
+                    open={drawerOpen}
+                    onClose={() => setDrawerOpen(false)}
+                    PaperProps={{ style: { height: '100%', width:'40%', alignItems: 'center', justifyContent: 'center'} }}
+                  >
+                    {selectedBook && (
+                    <div className="details">
+                
+                        {/* <h1>{name.toUpperCase()}</h1> */}
+                        <h2>{selectedBook.bookName.toUpperCase()}</h2>
+                        <Box sx={{fontSize:"25px",fontFamily:'TimesNewRoman'}}>
+                        <p><b>Decsription:</b> {selectedBook.bookDescription}</p>
+                        <p><b>Category name:</b>{selectedBook.categoryName}</p>
+                        <p><b>Author:</b>{selectedBook.authorName}</p>
+                        <p><b>Publication Year:</b>{selectedBook.publicationYear}</p>
+                        </Box>
+                    </div>
+                    )}
+                  
+                  </Drawer>
+                   
+
+                
+            </div>
 
             
         </Card>
+        
         {/* <Carousel animation='slide' duration={500}>
             {
                 items.map( (item,i)=> <Item key={i} item={item} /> ) 
