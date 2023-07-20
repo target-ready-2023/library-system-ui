@@ -10,7 +10,8 @@ import LocalLibraryIcon from '@mui/icons-material/LocalLibrary';
 import HomeIcon from '@mui/icons-material/Home';
 import CategoryIcon from '@mui/icons-material/Category';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect} from 'react';
+import axios from 'axios';
 
 
 
@@ -25,12 +26,44 @@ const Item = styled(Paper)(({ theme }) => ({
 
 export default function RowAndColumnSpacing() {
 
+  const [formData, setFormData] = useState({
+    booName: '',
+    bookDescription: '',
+    categoryName: '',
+    authorName: '',
+    publicationYear: ''
+  });
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+  
+
     const navigate = useNavigate();
 
     const [drawerOpen, setDrawerOpen] = useState(false);
-
-    
+    const [responseMessage, setResponseMessage] = useState('');
       const [open, setOpen] = useState(false);
+
+      
+      const postData = async (e) => {
+        try {
+          const response = await axios.post('http://localhost:8081/library_system/v1/inventory/books', formData);
+      
+          // Handle the response here
+          setResponseMessage(response.data.message);
+          console.log(response.data.message);
+          setDrawerOpen(false);
+          setOpen(true);
+        } catch (error) {
+          // Handle any errors here
+          console.error('Error making POST request:', error);
+        }
+      };
     
       // const handleClick = () => {
       //   setOpen(true);
@@ -59,7 +92,7 @@ export default function RowAndColumnSpacing() {
       }
       const handleSubmit = () => {
         // alert(`Name: ${name}, Email: ${email}`);
-        setDrawerOpen(false);
+        
         setOpen(true);        
       };
   return (
@@ -89,37 +122,48 @@ export default function RowAndColumnSpacing() {
                               <FormLabel sx={{marginBottom:'10px', fontFamily:'TimesNewRoman', fontSize:'50px'}}>Book Details</FormLabel>
                               <TextField 
                               label="Book Name" 
-                              fullWidth 
-                              // onChange={(e) => setBookName(e.target.value)} 
+                              name= "bookName" 
+                              value={formData.name}
+                              onChange={handleInputChange}
+                              fullWidth  
                               style={{marginBottom:'10px'}}
                               />
                                 <TextField 
                               label="Book Description" 
+                              name="bookDescription"
+                              value={formData.name}
+                              onChange={handleInputChange}
                               fullWidth 
                               // onChange={(e) => setBookDescription(e.target.value)}
                               style={{marginBottom:'10px'}}
                               />
                               <TextField 
                               label="Category Name" 
+                              name="categoryName"
+                              value={formData.name}
+                              onChange={handleInputChange}
                               fullWidth 
-                              // onChange={(e) => setCategoryName(e.target.value)} 
                               style={{marginBottom:'10px'}}
                               />
 
                               <TextField 
                               label="Author Name" 
+                              name="authorName"
+                              value={formData.name}
+                              onChange={handleInputChange}
                               fullWidth 
-                              // onChange={(e) => setAuthorName(e.target.value)}
                               style={{marginBottom:'10px'}} 
                               />
 
                               <TextField 
                               label="Publication Year" 
+                              name="publicationYear"
+                              value={formData.name}
+                              onChange={handleInputChange}
                               fullWidth 
-                              // onChange={(e) => setPublicationYear(e.target.value)} 
                               style={{marginBottom:'10px'}}
                               />
-                              <Button variant="contained" color="primary" onClick={handleSubmit}>
+                              <Button variant="contained" color="primary" onClick={postData}>
                                 Add
                               </Button>
                             </Box>

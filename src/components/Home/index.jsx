@@ -25,7 +25,7 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/library_service_api/v1/getAllBooks`);
+        const response = await axios.get(`http://localhost:8081/library_system/v1/getBooks`);
         setData(response.data);
       } catch (error) {
         console.error(error);
@@ -33,14 +33,8 @@ const Home = () => {
     };
 
     fetchData();
-  }, []);
-
+  });
   
-
-
-
-
-
 
     // var items = [
         
@@ -69,9 +63,9 @@ const Home = () => {
     
 
     return (
-        <div>
+        <div sx={{paddingTop:'70px', fontFamily:'TimesNewRoman'}}>
         <Card className="App-Card">
-            <h3>Home</h3>
+            <h3>Books Directory</h3>
             <div>
                 {data.map((item) => (
                     <div>
@@ -85,24 +79,25 @@ const Home = () => {
                      textAlign: 'left',
                      fontFamily:'TimesNewRoman',
                      fontSize:'20px',
-                     padding:'10px'}}>
+                     padding:'10px',
+                     color:'black'}}>
                      <Box sx={{
-          backgroundColor: 'lightBlue',
-         //border: '2px solid black',
-          width: '84%',
-          height: '70px',
-          marginLeft:'210px',
-          marginTop:'5px',
-          textAlign: 'left',
-          fontFamily:'TimesNewRoman',
-          fontSize:'20px',
-          padding:'10px',
-          borderRadius: '5px',
-          boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
-          transition: 'transform 0.3s', // Add transition for smooth zoom effect
-          '&:hover': {
-            transform: 'scale(1.01)', // Zoom the box by 10% on hover
-          },
+                        backgroundColor: 'lightBlue',
+                      //border: '2px solid black',
+                        width: '84%',
+                        height: '70px',
+                        marginLeft:'210px',
+                        marginTop:'5px',
+                        textAlign: 'left',
+                        fontFamily:'TimesNewRoman',
+                        fontSize:'20px',
+                        padding:'10px',
+                        borderRadius: '5px',
+                        boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
+                        transition: 'transform 0.3s', // Add transition for smooth zoom effect
+                        '&:hover': {
+                          transform: 'scale(1.01)', // Zoom the box by 10% on hover
+                        },
            //position: 'fixed',
         //   top: '500px',
         //   left: '500px',
@@ -127,7 +122,7 @@ const Home = () => {
                     anchor="right"
                     open={drawerOpen}
                     onClose={() => setDrawerOpen(false)}
-                    PaperProps={{ style: { height: '100%', width:'40%', alignItems: 'center', justifyContent: 'center'} }}
+                    PaperProps={{ style: { height: '100%', width:'70%', alignItems: 'center', justifyContent: 'center'} }}
                   >
                     {selectedBook && (
                     <div className="details">
@@ -135,10 +130,10 @@ const Home = () => {
                         {/* <h1>{name.toUpperCase()}</h1> */}
                         <h2>{selectedBook.bookName.toUpperCase()}</h2>
                         <Box sx={{fontSize:"25px",fontFamily:'TimesNewRoman'}}>
-                        <p><b>Decsription:</b> {selectedBook.bookDescription}</p>
-                        <p><b>Category name:</b>{selectedBook.categoryName}</p>
-                        <p><b>Author:</b>{selectedBook.authorName}</p>
-                        <p><b>Publication Year:</b>{selectedBook.publicationYear}</p>
+                        <p>{selectedBook.bookDescription}</p>
+                        <p>{selectedBook.categoryName}</p>
+                        <p>{selectedBook.authorName}</p>
+                        <p>{selectedBook.publicationYear}</p>
                         </Box>
                     </div>
                     )}

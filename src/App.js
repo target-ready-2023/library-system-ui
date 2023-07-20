@@ -6,22 +6,21 @@ import { BrowserRouter } from 'react-router-dom';
 import Layout from './components/Layout';
 function App() {
   return (
-    <div>
 
-      <BrowserRouter>
-      <Header/>
+
+      
       <div className="App">
-      <PageRoutes />
-
-
-        <Layout />
-
-
+        <BrowserRouter>
+          <Header/>
+          <PageRoutes />
+          <Layout />
+          <Footer/>
+        </BrowserRouter>
       </div>
-      <Footer/>
-    </BrowserRouter>
+      
+   
 
-    </div>
+  
 
   );
 }
