@@ -120,7 +120,7 @@ export default function RowAndColumnSpacing() {
                               style={{marginBottom:'10px'}}
                               />
                               <Button variant="contained" color="primary" onClick={handleSubmit}>
-                                Submit
+                                Add
                               </Button>
                             </Box>
                           </Drawer>
