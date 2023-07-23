@@ -8,12 +8,22 @@ import image3 from "../../images/image1.png"
 import './home.css';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+//import { Numbers } from "@mui/icons-material";
+import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 
 const Home = () => {
   const [data, setData] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
 //    const name=selectedBook.bookName
+
+const [currentPage,setCurrentPage]=useState(0);
+  const recordsPerPage=5;
+  const lastIndex=(currentPage+1)*recordsPerPage;
+  const firstIndex=lastIndex-recordsPerPage;
+  const records=data.slice(firstIndex,lastIndex);
+  const nPage=Math.ceil(data.length/recordsPerPage);
+  
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
   };
@@ -21,11 +31,20 @@ const Home = () => {
     setSelectedBook(item);
     setDrawerOpen(!drawerOpen);
   };
+  const generatePaginationNumbers = () => {
+    const numbers = [];
+    for (let i = 1; i <= nPage; i++) {
+      numbers.push(i);
+    }
+    return numbers;
+  };
+
+  const Numbers = generatePaginationNumbers();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8081/library_system/v1/getBooks`);
+        const response = await axios.get(`http://localhost:8081/library_system/v1/books_directory?pageNumber=${currentPage}`);
         setData(response.data);
       } catch (error) {
         console.error(error);
@@ -33,9 +52,13 @@ const Home = () => {
     };
 
     fetchData();
-  });
+  },[currentPage]);
   
-
+  const changePage = (pageNumber) => {
+    if (pageNumber >= 0 && pageNumber <= nPage+1) {
+      setCurrentPage(pageNumber);
+    }
+  };
     // var items = [
         
     //     {
@@ -139,13 +162,35 @@ const Home = () => {
                     )}
                   
                   </Drawer>
-                   
-
-                
+                                
             </div>
 
+            <ul className="pagination">
+              <li className="page-item">
+                <a href="#" className="page-link" onClick={() => changePage(currentPage - 1)}>
+                  previous
+                </a>
+              </li>
+              {Numbers.map((number, index) => (
+                <li
+                  className={`page-item ${currentPage === number ? 'active' : ''}`}
+                  key={index}
+                >
+                  <a href="#" className="page-link" onClick={() => changePage(number)}>
+                    {currentPage+1}
+                  </a>
+                </li>
+              ))}
+              <li className="page-item">
+                <a href="#" className="page-link" onClick={() => changePage(currentPage + 1)}>
+                  Next
+                </a>
+              </li>
+            </ul>
             
         </Card>
+
+      
         
         {/* <Carousel animation='slide' duration={500}>
             {
@@ -159,6 +204,7 @@ const Home = () => {
         </div>
     )
 }
+
 
 // function Item(props) {
 //     return (
