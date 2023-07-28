@@ -2,18 +2,36 @@ import { Card } from "@mui/material"
 import Box from '@mui/material/Box';
 import { Button, Icon, Drawer, TextField, Snackbar, Alert} from '@mui/material';
 import { FormLabel } from '@mui/material';
-import { useState } from 'react';
 import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { useNavigate} from 'react-router-dom';
+
+
+import { makeStyles } from '@mui/styles';
+import Home from '../Home';
+
+const useStyles = makeStyles((theme) => ({
+  customButton: {
+    
+    height:'auto'
+    // Add more custom styles here as needed
+  },
+}));
 
 const Category = () => {
 
-    
+  const classes = useStyles();
+
+  const navigate = useNavigate(); 
+  
+
 
     const [drawerOpen, setDrawerOpen] = useState(false);
 
-    
+      const [data,setData]=useState([]);
       const [open, setOpen] = useState(false);
       const [responseMessage, setResponseMessage] = useState('');
+      const [categoryData,setcategoryData]=useState("false");
 
       const [formData, setFormData] = useState({
        
@@ -42,12 +60,16 @@ const Category = () => {
         setOpen(false);
       };
     
-
-    const toggleDrawer = () => {
-      setDrawerOpen(!drawerOpen);
-    };
-
     
+  
+
+      const handleButtonClick = (categoryName) => {
+        setcategoryData(!categoryData);
+        navigate('/', { state: { prop1: categoryData, prop2: categoryName } });
+        // <Home propFromParent={categoryData} />
+        // Home(categoryData);
+       
+      };
       
       const handleSubmit = () => {
         // alert(`Name: ${name}, Email: ${email}`);
@@ -69,13 +91,95 @@ const Category = () => {
           console.error('Error making POST request:', error);
         }
       };
+
+      useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const response = await axios.get(`http://localhost:8081/library_system/v2/categories`);
+            setData(response.data);
+          } catch (error) {
+            console.error(error);
+          }
+        };
+    
+        fetchData();
+      });
     return (
-        <div>
+        <div className={classes.customButton}>
         {/* <Card className="App-Card">
             <h3>Category</h3>
         </Card> */}
+        
+        <div style={{marginTop:'10%',height:'auto'}}>
+                {data.map((item) => (
+                    <div >
+                      
+                    <p key={item.categoryId} >
+                     { <Button onClick={() => 
+                    handleButtonClick(item.categoryName)
+                  
+                    }  
+                     sx={{ width: '100%',
+                     height: '70px',
+                    // marginLeft:'10px',
+                     marginTop:'10px',
+                     textAlign: 'left',
+                     fontFamily:'TimesNewRoman',
+                     fontSize:'20px',
+                     padding:'10px',
+                     color:'black'}}>
 
-<div><div sx={{backgroundColor:' #6c88c8'}}><Button sx={{color:'black',backgroundColor:'rgb(108, 191, 223)' ,fontSize:'15px',marginTop:'100px',left:'80%', fontFamily:'TimesNewRoman',fontWeight:'bold'}} onClick={toggleDrawer}>Add Category</Button></div>
+                      
+                     <Box sx={{
+                        backgroundColor: 'lightBlue',
+                      //border: '2px solid black',
+                        width: '75%',
+                        height: '70px',
+                        marginLeft:'20%',
+                        marginRight:'20%',
+                        marginTop:'5px',
+                        textAlign: 'left',
+                        fontFamily:'TimesNewRoman',
+                        fontSize:'20px',
+                        padding:'10px',
+                        left: '500px',
+                        borderRadius: '5px',
+                        boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
+                        transition: 'transform 0.3s', // Add transition for smooth zoom effect
+                        '&:hover': {
+                          transform: 'scale(1.01)', // Zoom the box by 10% on hover
+                        },
+           //position: 'fixed',
+        //   top: '500px',
+        //   left: '500px',
+        }}>
+                        {item.categoryName}
+                        </Box>
+                      </Button> }
+                    
+                     {/* sx={{
+                        top:'5px',
+                        left:'90%',
+                        display: 'flex',
+                        fontFamily:'TimesNewRoman',
+                        color:"black"}}
+                    
+                    <></>
+                     */}</p>
+                      
+                    </div> 
+                    ))}
+                   
+                                
+            </div>
+
+
+
+
+
+
+ <div>
+  {/* <div sx={{backgroundColor:' #6c88c8'}}><Button sx={{color:'black',backgroundColor:'rgb(108, 191, 223)' ,fontSize:'15px',marginTop:'100px',left:'80%', fontFamily:'TimesNewRoman',fontWeight:'bold'}} onClick={toggleDrawer}>Add Category</Button></div> } */}
 <Drawer
   anchor="bottom"
   open={drawerOpen}
