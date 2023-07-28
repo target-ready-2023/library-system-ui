@@ -10,11 +10,15 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 //import { Numbers } from "@mui/icons-material";
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
+import { useLocation } from 'react-router-dom';
 
 const Home = () => {
   const [data, setData] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
+  const location = useLocation();
+  const prop1 = location.state?.prop1 || '';
+  const prop2 = location.state?.prop2 || '';
 //    const name=selectedBook.bookName
 
 const [currentPage,setCurrentPage]=useState(0);
@@ -23,6 +27,7 @@ const [currentPage,setCurrentPage]=useState(0);
   const firstIndex=lastIndex-recordsPerPage;
   const records=data.slice(firstIndex,lastIndex);
   const nPage=Math.ceil(data.length/recordsPerPage);
+ 
   
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
@@ -40,19 +45,27 @@ const [currentPage,setCurrentPage]=useState(0);
   };
 
   const Numbers = generatePaginationNumbers();
+ 
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        if(prop1){
+          const response = await axios.get(`http://localhost:8081/library_system/v1/book/category/${prop2}`);
+          setData(response.data);
+          prop1="false";
+        }
+      else{
         const response = await axios.get(`http://localhost:8081/library_system/v1/books_directory?pageNumber=${currentPage}`);
         setData(response.data);
+      }
       } catch (error) {
         console.error(error);
       }
     };
 
     fetchData();
-  });
+  },[prop1]);
 
   
   
