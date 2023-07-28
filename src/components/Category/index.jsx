@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import { Button, Icon, Drawer, TextField, Snackbar, Alert} from '@mui/material';
 import { FormLabel } from '@mui/material';
 import { useState } from 'react';
+import axios from 'axios';
 
 const Category = () => {
 
@@ -12,6 +13,21 @@ const Category = () => {
 
     
       const [open, setOpen] = useState(false);
+      const [responseMessage, setResponseMessage] = useState('');
+
+      const [formData, setFormData] = useState({
+       
+        categoryName: ''
+        
+      });
+    
+      const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setFormData({
+          ...formData,
+          [name]: value,
+        });
+      };
     
       // const handleClick = () => {
       //   setOpen(true);
@@ -38,6 +54,21 @@ const Category = () => {
         setDrawerOpen(false);
         setOpen(true);        
       };
+
+      const postData = async (e) => {
+        try {
+          const response = await axios.post('http://localhost:8081/library_system/v2/inventory/category', formData);
+      
+          // Handle the response here
+          setResponseMessage(response.data.message);
+          console.log(response.data.message);
+          setDrawerOpen(false);
+          setOpen(true);
+        } catch (error) {
+          // Handle any errors here
+          console.error('Error making POST request:', error);
+        }
+      };
     return (
         <div>
         {/* <Card className="App-Card">
@@ -55,12 +86,15 @@ const Category = () => {
     <FormLabel sx={{marginBottom:'10px', fontFamily:'TimesNewRoman', fontSize:'50px'}}>Category Details</FormLabel>
     <TextField 
     label="Category Name" 
+    name="categoryName"
+    value={formData.name}
+    onChange={handleInputChange}
     fullWidth 
     // onChange={(e) => setBookName(e.target.value)} 
     style={{marginBottom:'10px'}}
     />
       
-    <Button variant="contained" color="primary" onClick={handleSubmit}>
+    <Button variant="contained" color="primary" onClick={postData}>
       Add 
     </Button>
   </Box>
