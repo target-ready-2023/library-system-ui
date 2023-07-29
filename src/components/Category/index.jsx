@@ -24,11 +24,19 @@ const Category = () => {
 
   const navigate = useNavigate(); 
   
-
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
+  };
 
     const [drawerOpen, setDrawerOpen] = useState(false);
 
       const [data,setData]=useState([]);
+      const [currentPage,setCurrentPage]=useState(0);
+      const recordsPerPage=5;
+      const lastIndex=(currentPage+1)*recordsPerPage;
+      const firstIndex=lastIndex-recordsPerPage;
+      const records=data.slice(firstIndex,lastIndex);
+      const nPage=Math.ceil(data.length/recordsPerPage);
       const [open, setOpen] = useState(false);
       const [responseMessage, setResponseMessage] = useState('');
       const [categoryData,setcategoryData]=useState("false");
@@ -38,6 +46,22 @@ const Category = () => {
         categoryName: ''
         
       });
+
+      const generatePaginationNumbers = () => {
+        const numbers = [];
+        for (let i = 1; i <= nPage; i++) {
+          numbers.push(i);
+        }
+        return numbers;
+      };
+    
+      const Numbers = generatePaginationNumbers();
+
+      const changePage = (pageNumber) => {
+        if (pageNumber >= 0 && pageNumber <= nPage+1) {
+          setCurrentPage(pageNumber);
+        }
+      };
     
       const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -47,11 +71,7 @@ const Category = () => {
         });
       };
     
-      // const handleClick = () => {
-      //   setOpen(true);
-      //   // handleSubmit();
-      // };
-    
+         
       const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
           return;
@@ -59,39 +79,32 @@ const Category = () => {
     
         setOpen(false);
       };
-    
-    
   
-
       const handleButtonClick = (categoryName) => {
         setcategoryData(!categoryData);
         navigate('/', { state: { prop1: categoryData, prop2: categoryName } });
-        // <Home propFromParent={categoryData} />
-        // Home(categoryData);
        
       };
       
       const handleSubmit = () => {
-        // alert(`Name: ${name}, Email: ${email}`);
+       
         setDrawerOpen(false);
         setOpen(true);        
       };
 
       const postData = async (e) => {
         try {
-          const response = await axios.post('http://localhost:8081/library_system/v2/inventory/category', formData);
-      
-          // Handle the response here
+          const response = await axios.post('http://localhost:8081/library_system/v2/inventory/category', formData)
           setResponseMessage(response.data.message);
           console.log(response.data.message);
           setDrawerOpen(false);
           setOpen(true);
         } catch (error) {
-          // Handle any errors here
           console.error('Error making POST request:', error);
         }
       };
 
+      
       useEffect(() => {
         const fetchData = async () => {
           try {
@@ -106,17 +119,16 @@ const Category = () => {
       });
     return (
         <div className={classes.customButton}>
-        {/* <Card className="App-Card">
-            <h3>Category</h3>
-        </Card> */}
-        
-        <div style={{marginTop:'10%',height:'auto'}}>
+                
+        <div style={{marginTop:'5%',height:'auto'}}>
+        <div sx={{backgroundColor:' #6c88c8'}}><Button sx={{color:'black',backgroundColor:'rgb(108, 191, 223)' ,fontSize:'15px',marginTop:'20px',left:'85%', fontFamily:'TimesNewRoman',fontWeight:'bold'}} onClick={toggleDrawer}>Add Category</Button></div> 
+
                 {data.map((item) => (
                     <div >
                       
-                    <p key={item.categoryId} >
+                    <p key={item.category_id} >
                      { <Button onClick={() => 
-                    handleButtonClick(item.categoryName)
+                    handleButtonClick(item.category_name)
                   
                     }  
                      sx={{ width: '100%',
@@ -149,38 +161,46 @@ const Category = () => {
                         '&:hover': {
                           transform: 'scale(1.01)', // Zoom the box by 10% on hover
                         },
-           //position: 'fixed',
-        //   top: '500px',
-        //   left: '500px',
+           
         }}>
-                        {item.categoryName}
+                        {item.category_name}
                         </Box>
                       </Button> }
                     
-                     {/* sx={{
-                        top:'5px',
-                        left:'90%',
-                        display: 'flex',
-                        fontFamily:'TimesNewRoman',
-                        color:"black"}}
-                    
-                    <></>
-                     */}</p>
+                     </p>
                       
                     </div> 
                     ))}
                    
                                 
             </div>
-
-
-
-
+            
+            <ul className="pagination">
+              <li className="page-item">
+                <a href="#" className="page-link" onClick={() => { if (currentPage > 0) changePage(currentPage - 1) }}>
+                    previous
+                </a>
+              </li>
+              {Numbers.map((number, index) => (
+                <li
+                  className={`page-item ${currentPage === number ? 'active' : ''}`}
+                  key={index}
+                >
+                  <a href="#" className="page-link" onClick={() => changePage(number)}>
+                    {currentPage+1}
+                  </a>
+                </li>
+              ))}
+              <li className="page-item">
+                <a href="#" className="page-link" onClick={() => { if(currentPage < nPage) changePage(currentPage + 1)}}>
+                  Next
+                </a>
+              </li>
+            </ul>
 
 
  <div>
-  {/* <div sx={{backgroundColor:' #6c88c8'}}><Button sx={{color:'black',backgroundColor:'rgb(108, 191, 223)' ,fontSize:'15px',marginTop:'100px',left:'80%', fontFamily:'TimesNewRoman',fontWeight:'bold'}} onClick={toggleDrawer}>Add Category</Button></div> } */}
-<Drawer
+  <Drawer
   anchor="bottom"
   open={drawerOpen}
   onClose={() => setDrawerOpen(false)}

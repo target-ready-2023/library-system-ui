@@ -74,12 +74,11 @@
                 },
                 categoryNames,
               };
-              // Replace this with the logic to send the data (e.g., via API)
-                    axios.post("http://localhost:8081/library_system/v1/inventory/books", data)
+              
+                axios.post("http://localhost:8081/library_system/v1/inventory/books", data)
               .then((response) => {
                 console.log("Response from the server:", response.data);
-                //setResponseMessage(response.data);
-                
+                             
                 setSnackbarMessage("Book added successfully!");
                 setSnackbarSeverity("success");
                 setOpenSnackbar(true);
@@ -130,7 +129,7 @@
         style={{backgroundColor:'#6c88c8'}}
         className='sidebar'
         >
-          {/* Content for the left side */}
+          
                         <Grid 
                         item xs={12} 
                         p={2} 
