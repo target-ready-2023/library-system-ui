@@ -11,6 +11,7 @@ import axios from 'axios';
 //import { Numbers } from "@mui/icons-material";
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { useLocation } from 'react-router-dom';
+import { red } from "@mui/material/colors";
 
 const Home = () => {
   const [data, setData] = useState([]);
@@ -27,8 +28,7 @@ const [currentPage,setCurrentPage]=useState(0);
   const firstIndex=lastIndex-recordsPerPage;
   const records=data.slice(firstIndex,lastIndex);
   const nPage=Math.ceil(data.length/recordsPerPage);
- 
-  
+   
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
   };
@@ -49,13 +49,15 @@ const [currentPage,setCurrentPage]=useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
+       try {
         if(prop1){
           const response = await axios.get(`http://localhost:8081/library_system/v1/book/category/${prop2}`);
           setData(response.data);
+          console.log(response.data);
           prop1="false";
         }
-      else{
+     else{
+        
         const response = await axios.get(`http://localhost:8081/library_system/v1/books_directory?pageNumber=${currentPage}`);
         setData(response.data);
       }
@@ -65,40 +67,36 @@ const [currentPage,setCurrentPage]=useState(0);
     };
 
     fetchData();
-  },[prop1]);
-
+  },[prop1, currentPage]);
   
-  
-  const changePage = (pageNumber) => {
-    if (pageNumber >= 0 && pageNumber <= nPage+1) {
-      setCurrentPage(pageNumber);
-    }
+  const changePage = (page_number) => {
+      setCurrentPage(page_number);
   };
-    // var items = [
-        
-    //     {
-    //         image:`${image1}`, 
-    //         name: 'Learn and Grow ',
-    //         disc: 'Together!'
-           
-    //     },
-    //     {  
-    //         image:`${image2}`, 
-    //         name: 'In your own ',
-    //         disc: 'Space!'
-            
-            
-    //     },
-    //     { 
-    //         image:`${image3}`, 
-    //         name: 'At your own ',
-    //         disc: 'Pace!'
-           
-            
-    //     }
 
-    // ]
-    
+ 
+  const deleteBook = (book_id) =>{
+    const deleteApiUrl = `http://localhost:8081/library_system/v1/book/${book_id}`;
+
+      fetch(deleteApiUrl, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        console.log('Book deleted successfully.');
+        setData((prevData) => prevData.filter((book) => book.book_id !== book_id));
+        setDrawerOpen(false);
+      })
+      .catch((error) => {
+        console.error('Error deleting the book:', error.message);
+      });
+
+  } 
+
 
     return (
         <div sx={{paddingTop:'70px', fontFamily:'TimesNewRoman'}}>
@@ -106,13 +104,12 @@ const [currentPage,setCurrentPage]=useState(0);
             <h3>Books Directory</h3>
             <div>
                 {data.map((item) => (
-                    <div>
+                    <div >
                       
-                    <p key={item.bookId} >
+                    <p key={item.book_id}>
                      <Button onClick={() => handleToggleDrawer(item)}  
                      sx={{ width: '100%',
                      height: '70px',
-                    // marginLeft:'10px',
                      marginTop:'10px',
                      textAlign: 'left',
                      fontFamily:'TimesNewRoman',
@@ -121,7 +118,6 @@ const [currentPage,setCurrentPage]=useState(0);
                      color:'black'}}>
                      <Box sx={{
                         backgroundColor: 'lightBlue',
-                      //border: '2px solid black',
                         width: '84%',
                         height: '70px',
                         marginLeft:'210px',
@@ -132,27 +128,17 @@ const [currentPage,setCurrentPage]=useState(0);
                         padding:'10px',
                         borderRadius: '5px',
                         boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
-                        transition: 'transform 0.3s', // Add transition for smooth zoom effect
+                        transition: 'transform 0.3s', 
                         '&:hover': {
-                          transform: 'scale(1.01)', // Zoom the box by 10% on hover
+                          transform: 'scale(1.01)', 
                         },
-           //position: 'fixed',
-        //   top: '500px',
-        //   left: '500px',
+           
         }}>
-                        {item.bookName}
+                        {item.book_name}
                         </Box>
                      </Button>
                     
-                     {/* sx={{
-                        top:'5px',
-                        left:'90%',
-                        display: 'flex',
-                        fontFamily:'TimesNewRoman',
-                        color:"black"}}
-                    
-                    <></>
-                     */}</p>
+                     </p>
                       
                     </div> 
                     ))}
@@ -164,14 +150,13 @@ const [currentPage,setCurrentPage]=useState(0);
                   >
                     {selectedBook && (
                     <div className="details">
-                
-                        {/* <h1>{name.toUpperCase()}</h1> */}
-                        <h2>{selectedBook.bookName.toUpperCase()}</h2>
+                          <Button style={{Color:red,marginLeft:'85%'}} onClick={() => deleteBook(selectedBook.book_id)}>Delete Book</Button>
+                         <h2>{selectedBook.book_name.toUpperCase()}</h2>
                         <Box sx={{fontSize:"25px",fontFamily:'TimesNewRoman'}}>
-                        <p>{selectedBook.bookDescription}</p>
-                        <p>{selectedBook.categoryName}</p>
-                        <p>{selectedBook.authorName}</p>
-                        <p>{selectedBook.publicationYear}</p>
+                        <p>{selectedBook.book_description}</p>
+                        <p>{selectedBook.category_name}</p>
+                        <p>{selectedBook.author_name}</p>
+                        <p>{selectedBook.publication_year}</p>
                         </Box>
                     </div>
                     )}
@@ -182,8 +167,9 @@ const [currentPage,setCurrentPage]=useState(0);
 
             <ul className="pagination">
               <li className="page-item">
-                <a href="#" className="page-link" onClick={() => changePage(currentPage - 1)}>
-                  previous
+                <a href="#" className="page-link" onClick={() => { if (currentPage > 0) changePage(currentPage - 1) }}>
+
+                    previous
                 </a>
               </li>
               {Numbers.map((number, index) => (
@@ -197,7 +183,7 @@ const [currentPage,setCurrentPage]=useState(0);
                 </li>
               ))}
               <li className="page-item">
-                <a href="#" className="page-link" onClick={() => changePage(currentPage + 1)}>
+                <a href="#" className="page-link" onClick={() => { if(currentPage < nPage) changePage(currentPage + 1)}}>
                   Next
                 </a>
               </li>
