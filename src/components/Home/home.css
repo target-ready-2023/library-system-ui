@@ -10,6 +10,30 @@
   text-align: center;
 }
 
+td{
+  padding: 5px;
+   width: 20%;
+}
+
+
+.delete-button {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.delete-button i {
+    margin-right: 5px;
+}
+
+.delete-button:hover {
+    background-color: #e0e0e0;
+}
+
 .App-Card{
    top: 0px; 
    margin-left: 80px;
