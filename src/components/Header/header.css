@@ -1,8 +1,8 @@
-.App-header{
+.App-header {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 80px; 
+  height: 80px;
   z-index: 2;
 }
