@@ -52,7 +52,7 @@ const [currentPage,setCurrentPage]=useState(0);
     };
 
     fetchData();
-  },[currentPage]);
+  });
   
   const changePage = (pageNumber) => {
     if (pageNumber >= 0 && pageNumber <= nPage+1) {
