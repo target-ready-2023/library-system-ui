@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Button,
   Table,
@@ -20,9 +21,17 @@ import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import UpdateButton from "../UpdateButton";
 import DeleteButton from "../DeleteButton";
+import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 
 const TableComponent = ({ data, deleteBook }) => {
-  const [openDialogs, setOpenDialogs] = useState([]);
+  const [openDialogs, setOpenDialogs] = useState(
+    Array(data.length).fill(false)
+  );
+  const [numberOfCopies, setNumberOfCopies] = useState([]);
+  const [fetchDataFlag, setFetchDataFlag] = useState(true);
+
+  // const [copiesData, setcopiesData] = useState([]);
 
   const handleOpen = (index) => {
     const newOpenDialogs = [...openDialogs];
@@ -41,10 +50,33 @@ const TableComponent = ({ data, deleteBook }) => {
     serialNumber: index + 1,
   }));
 
+  useEffect(() => {
+    const fetchNumberOfCopies = async () => {
+      const copiesData = {};
+
+      for (const item of data) {
+        try {
+          const response = await axios.get(
+            `http://localhost:8081/library_system/v1/book/no_of_copies/${item.book_id}`
+          );
+          copiesData[item.book_id] = response.body;
+        } catch (error) {
+          copiesData[item.book_id] = "N/A";
+        }
+      }
+
+      setNumberOfCopies(copiesData);
+    };
+    if (fetchDataFlag) {
+      fetchNumberOfCopies();
+      setFetchDataFlag(false);
+    }
+  }, [data, fetchDataFlag]);
+
   const tableContainerStyles = {
-    maxWidth: "900px",
+    maxWidth: "1000px",
     margin: "0 auto",
-    borderRadius: "8px",
+    borderRadius: "10px",
     overflow: "hidden",
   };
 
@@ -65,19 +97,18 @@ const TableComponent = ({ data, deleteBook }) => {
   const tdStyles = {
     borderBottom: "1px solid #ddd",
     padding: "10px",
-    textAlign: "center",
+    textAlign: "left",
     fontSize: "16px",
   };
 
   const actionButtonsStyles = {
     display: "flex",
-    justifyContent: "center",
-    gap: "0.5px", // Reduce the gap between icons here
+    justifyContent: "right",
+    gap: "0.25px",
   };
-
-  const handleDelete = (bookId) => {
-    // Implement your delete logic here
-    deleteBook(bookId);
+  const dialogStyles = {
+    innerHeight: "200px",
+    innerWidth: "400px",
   };
 
   return (
@@ -97,10 +128,31 @@ const TableComponent = ({ data, deleteBook }) => {
             <TableCell style={tableHeaderCellStyles} align="center">
               Publication Year
             </TableCell>
-            <TableCell style={tableHeaderCellStyles} align="center">
+
+            <TableCell
+              style={{
+                backgroundColor: "#f2f2f2",
+                borderBottom: "1px solid #ddd",
+                fontSize: "18px",
+                fontWeight: "bold",
+                padding: "12px",
+                textAlign: "left",
+                width: "250px",
+              }}
+              align="center"
+            >
               Copies
             </TableCell>
-            <TableCell style={tableHeaderCellStyles} align="center">
+            <TableCell
+              style={{
+                backgroundColor: "#f2f2f2",
+                borderBottom: "1px solid #ddd",
+                fontSize: "18px",
+                fontWeight: "bold",
+                padding: "12px",
+                textAlign: "left",
+              }}
+            >
               Actions
             </TableCell>
           </TableRow>
@@ -112,21 +164,43 @@ const TableComponent = ({ data, deleteBook }) => {
               <TableCell align="center">{item.book_name}</TableCell>
               <TableCell align="center">{item.author_name}</TableCell>
               <TableCell align="center">{item.publication_year}</TableCell>
-              <TableCell align="center"></TableCell>
-              <TableCell align="center" style={tdStyles}>
+              <TableCell align="center">
+                {numberOfCopies[item.book_id]}
+              </TableCell>
+              <TableCell align="right" style={tdStyles}>
                 <div style={actionButtonsStyles}>
                   <IconButton onClick={() => handleOpen(index)} color="primary">
                     <VisibilityIcon />
                   </IconButton>
                   <UpdateButton item={item} />
                   <DeleteButton item={item} />
+                  <IconButton color="primary">
+                    <LibraryAddIcon />
+                  </IconButton>
+                  <IconButton color="primary">
+                    <RemoveCircleOutlineIcon />
+                  </IconButton>
                 </div>
                 <Dialog
                   open={openDialogs[index]}
                   onClose={() => handleClose(index)}
+                  PaperProps={{
+                    style: {
+                      maxWidth: "500px",
+                      width: "100%",
+                      padding: "20px",
+                    },
+                  }}
                 >
-                  <DialogTitle>{item.book_name}</DialogTitle>
-                  <DialogContent>{item.book_description}</DialogContent>
+                  <DialogTitle>Book name: {item.book_name}</DialogTitle>
+                  <DialogContent>
+                    Book Description: {item.book_description}
+                  </DialogContent>
+                  <DialogContent>Author name: {item.author_name}</DialogContent>
+                  <DialogContent>
+                    Publication year: {item.publication_year}
+                  </DialogContent>
+
                   <DialogActions>
                     <Button onClick={() => handleClose(index)} color="primary">
                       Close

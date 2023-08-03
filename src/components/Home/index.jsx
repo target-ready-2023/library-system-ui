@@ -45,6 +45,7 @@ const Home = () => {
           `http://localhost:8081/library_system/v1/book/category/${prop2}`
         );
         setData(response.data);
+
         console.log(response.data);
         prop1 = "false";
       } else {
@@ -53,7 +54,6 @@ const Home = () => {
         );
         setData(response.data);
       }
-     
     } catch (error) {
       console.error(error);
     }
@@ -79,8 +79,8 @@ const Home = () => {
         <h3>Books Directory</h3>
         <div>
           <TableComponent data={data} />
-          
-          <ul className="pagination">
+
+          <ul className="pagination" id="pagination">
             <li className="page-item">
               <a
                 href="#"
