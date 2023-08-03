@@ -1,0 +1,12 @@
+/* UpdateForm.css */
+
+/* Style for the dialog container */
+.dialogContainer {
+  position: absolute;
+  top: 0;
+}
+
+/* Style for margin on the button group within DialogActions */
+.dialogActionsButtonGroup {
+  margin-left: 10px;
+}
