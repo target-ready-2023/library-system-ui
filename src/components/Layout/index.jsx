@@ -35,6 +35,7 @@ export default function RowAndColumnSpacing() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [chipData, setChipData] = useState([]);
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
   };
@@ -88,7 +89,7 @@ export default function RowAndColumnSpacing() {
         setSnackbarSeverity("success");
         setOpenSnackbar(true);
         setDrawerOpen(false);
-        resetForm();
+        resetForm();  
       })
 
       .catch((error) => {
@@ -97,6 +98,7 @@ export default function RowAndColumnSpacing() {
         setSnackbarMessage("Error submitting form.");
         setSnackbarSeverity("error");
         setOpenSnackbar(true);
+        setDrawerOpen(false);
       });
   };
 
@@ -264,7 +266,16 @@ export default function RowAndColumnSpacing() {
                   />
                   <div>
                     {categoryNames.map((category, index) => (
-                      <div key={index}>{category}</div>
+                      <Chip
+                        key={index}
+                        label={category}
+                        onDelete={() =>
+                          setCategoryNames((prevCategories) =>
+                            prevCategories.filter((_, i) => i !== index)
+                          )
+                        }
+                        style={{ margin: 4 }}
+                      />
                     ))}
                   </div>
                   <Button

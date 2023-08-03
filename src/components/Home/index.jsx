@@ -19,10 +19,8 @@ const Home = () => {
   const recordsPerPage = 5;
   const lastIndex = (currentPage + 1) * recordsPerPage;
   const firstIndex = lastIndex - recordsPerPage;
-  const records = data.slice(firstIndex, lastIndex);
   const nPage = Math.ceil(data.length / recordsPerPage);
-  const [count, setCount] = useState(0);
-
+  const records = data.slice(firstIndex, lastIndex);
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
   };
@@ -51,10 +49,11 @@ const Home = () => {
         prop1 = "false";
       } else {
         const response = await axios.get(
-          `http://localhost:8081/library_system/v1/books_directory?pageNumber=${currentPage}`
+          `http://localhost:8081/library_system/v1/books_directory?page_number=${currentPage}`
         );
         setData(response.data);
       }
+     
     } catch (error) {
       console.error(error);
     }
@@ -80,7 +79,8 @@ const Home = () => {
         <h3>Books Directory</h3>
         <div>
           <TableComponent data={data} />
-          {/* <ul className="pagination">
+          
+          <ul className="pagination">
             <li className="page-item">
               <a
                 href="#"
@@ -119,46 +119,7 @@ const Home = () => {
                 Next
               </a>
             </li>
-          </ul> */}
-
-<ul className="pagination">
-        <li className="page-item">
-          <a
-            href="#"
-            className="page-link"
-            onClick={() => {
-              if (currentPage > 0) changePage(currentPage - 1);
-            }}
-          >
-            previous
-          </a>
-        </li>
-        {Numbers.map((number, index) => (
-          <li
-            className={`page-item ${currentPage === number ? "active" : ""}`}
-            key={index}
-          >
-            <a
-              href="#"
-              className="page-link"
-              onClick={() => changePage(number)}
-            >
-              {currentPage + 1}
-            </a>
-          </li>
-        ))}
-        <li className="page-item">
-          <a
-            href="#"
-            className="page-link"
-            onClick={() => {
-              if (currentPage < nPage) changePage(currentPage + 1);
-            }}
-          >
-            Next
-          </a>
-        </li>
-      </ul>
+          </ul>
 
           <SnackbarComponent
             openSnackbar={openSnackbar}
