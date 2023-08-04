@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from "react";
+import { Button, IconButton } from "@mui/material";
 import { Delete } from "@mui/icons-material";
-import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
-import {Snackbar, Alert, IconButton} from "@mui/material";
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 
-const IssueButton = ({ item, updateBookCount }) => {
+
+import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
+import {Snackbar,Alert} from "@mui/material";
+
+const ReturnButton = ({ item, updateBookCount }) => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   const [data, setData] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const IssueBook = (book_id, student_id) => {
-    const issueApiUrl = `http://localhost:8081/library_system/v1/inventory/issue/book/${book_id}/${student_id}`;
+  const ReturnBook = (book_id, student_id) => {
+    const issueApiUrl = `http://localhost:8081/library_system/v1/inventory/return/book/${book_id}/${student_id}`;
 
     fetch(issueApiUrl, {
       method: "POST",
@@ -23,8 +27,8 @@ const IssueButton = ({ item, updateBookCount }) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
-        console.log("Book Issued successfully.");
-        setSnackbarMessage("Book Issued successfully!");
+        console.log("Book Returned successfully.");
+        setSnackbarMessage("Book Returned successfully!");
         setSnackbarSeverity("success");
         setOpenSnackbar(true);
         setData((prevData) =>
@@ -34,20 +38,20 @@ const IssueButton = ({ item, updateBookCount }) => {
         updateBookCount(book_id);
       })
       .catch((error) => {
-        console.error("Error Issuing the book:", error.message);
-        setSnackbarMessage("Error Issuing Book");
+        console.error("Error Returning the book:", error.message);
+        setSnackbarMessage("Error Returning the Book");
         setSnackbarSeverity("error");
         setOpenSnackbar(true);
       });
   };
 
-  const handleIssue = () => {
+  const handleReturn = () => {
     if (!item) {
-      console.error("No book selected for Issue.");
+      console.error("No book selected for Return.");
       // Handle error or show snackbar
       return;
     }
-    IssueBook(item.book_id, 1);
+    ReturnBook(item.book_id, 1);
   };
 
   const handleCloseSnackbar = (event, reason) => {
@@ -62,10 +66,10 @@ const IssueButton = ({ item, updateBookCount }) => {
       {/* <Button className="issue-button" onClick={handleIssue}>
         <Delete />
       </Button> */}
-      <IconButton color="primary" title = {"Issue Book"} onClick={handleIssue}>
-              <LibraryAddIcon />
-      </IconButton>
-      <Snackbar
+      <IconButton color="primary" title = {"Return Book"} onClick={handleReturn}>
+            <RemoveCircleOutlineIcon />
+    </IconButton>
+    <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
         open={openSnackbar}
         autoHideDuration={3000}
@@ -81,12 +85,7 @@ const IssueButton = ({ item, updateBookCount }) => {
       </Snackbar>
     </div>
   );
-
-  
 };
 
-export default IssueButton;
-
-
-
+export default ReturnButton;
 
