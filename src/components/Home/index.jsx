@@ -45,7 +45,10 @@ const Home = () => {
           `http://localhost:8081/library_system/v1/book/category/${prop2}`
         );
         setData(response.data);
-
+        const paginationElement = document.getElementById("pagination");
+        if (paginationElement) {
+          paginationElement.style.display = "none";
+        }
         console.log(response.data);
         prop1 = "false";
       } else {
