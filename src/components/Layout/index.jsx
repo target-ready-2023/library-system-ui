@@ -67,7 +67,7 @@ export default function RowAndColumnSpacing() {
     });
     setCategoryNames([]);
     setNewCategory("");
-    setNumberOfCopies(0);
+    setNumberOfCopies("");
   };
 
   const handleSubmit = (e) => {
@@ -77,7 +77,8 @@ export default function RowAndColumnSpacing() {
         ...book,
         publicationYear: parseInt(book.publicationYear),
       },
-      categoryNames,
+      category_names: categoryNames,
+      no_of_copies: parseInt(numberOfCopies)
     };
 
     axios
