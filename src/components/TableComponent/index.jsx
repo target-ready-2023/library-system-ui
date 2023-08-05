@@ -49,7 +49,6 @@ const TableComponent = ({ data, deleteBook }) => {
     ...item,
     serialNumber: index + 1,
   }));
-
   useEffect(() => {
     const fetchNumberOfCopies = async () => {
       const copiesData = {};
