@@ -114,7 +114,7 @@ const Category = () => {
 
   const dataWithSerialNumber = data.map((item, index) => ({
     ...item,
-    serialNumber: index + 1,
+    serialNumber: currentPage*10 + (index+1),
   }));
 
   const tableContainerStyles = {

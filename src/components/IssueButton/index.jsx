@@ -59,9 +59,6 @@ const IssueButton = ({ item, updateBookCount }) => {
 
   return (
     <div>
-      {/* <Button className="issue-button" onClick={handleIssue}>
-        <Delete />
-      </Button> */}
       <IconButton color="primary" title = {"Issue Book"} onClick={handleIssue}>
               <LibraryAddIcon />
       </IconButton>
