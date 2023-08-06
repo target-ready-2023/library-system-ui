@@ -23,15 +23,18 @@ import UpdateButton from "../UpdateButton";
 import DeleteButton from "../DeleteButton";
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import IssueButton  from "../IssueButton";
+import ReturnButton from "../ReturnButton";
 
-const TableComponent = ({ data, deleteBook }) => {
+const TableComponent = ({ data, currentPage }) => {
   const [openDialogs, setOpenDialogs] = useState(
     Array(data.length).fill(false)
   );
   const [numberOfCopies, setNumberOfCopies] = useState([]);
   const [fetchDataFlag, setFetchDataFlag] = useState(true);
 
-  // const [copiesData, setcopiesData] = useState([]);
+  const [copiesData, setcopiesData] = useState([]);
+  const [bookCategories, setBookCategories] = useState({});
 
   const handleOpen = (index) => {
     const newOpenDialogs = [...openDialogs];
@@ -47,30 +50,65 @@ const TableComponent = ({ data, deleteBook }) => {
 
   const dataWithSerialNumber = data.map((item, index) => ({
     ...item,
-    serialNumber: index + 1,
+    serialNumber: currentPage*5 + (index+1),
   }));
-  useEffect(() => {
-    const fetchNumberOfCopies = async () => {
-      const copiesData = {};
 
-      for (const item of data) {
-        try {
-          const response = await axios.get(
-            `http://localhost:8081/library_system/v1/book/no_of_copies/${item.book_id}`
-          );
-          copiesData[item.book_id] = response.body;
-        } catch (error) {
-          copiesData[item.book_id] = "N/A";
-        }
+  const fetchNumberOfCopies = async () => {
+    const copiesData = {};
+    for (const item of data) {
+      try {
+        const response = await axios.get(
+          `http://localhost:8081/library_system/v1/book/no_of_copies/${item.book_id}`
+        );
+        copiesData[item.book_id] = response.data;
+        fetchBookCategories(item.book_id);
+      } catch (error) {
+        copiesData[item.book_id] = "N/A";
       }
+    }
+    setNumberOfCopies(copiesData);
+  };
 
-      setNumberOfCopies(copiesData);
-    };
-    if (fetchDataFlag) {
+  const fetchBookCategories = async (bookId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8081/library_system/v2/categories/${bookId}`
+      );
+      setBookCategories((prevCategories) => ({
+        ...prevCategories,
+        [bookId]: response.data,
+      }));
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      setBookCategories((prevCategories) => ({
+        ...prevCategories,
+        [bookId]: [],
+      }));
+    }
+  };
+
+  useEffect(() => {
+    if (fetchDataFlag && data.length>0) {
       fetchNumberOfCopies();
       setFetchDataFlag(false);
     }
   }, [data, fetchDataFlag]);
+
+  useEffect(() => {
+    setFetchDataFlag(true);
+  },[data]);
+
+  const updateBookCount = async (bookId) =>{
+    try {
+      const response = await axios.get(
+        `http://localhost:8081/library_system/v1/book/no_of_copies/${bookId}`
+      );
+      numberOfCopies[bookId] = response.data;
+    } catch (error) {
+      numberOfCopies[bookId] = "N/A";
+    }
+    setNumberOfCopies(JSON.parse(JSON.stringify(numberOfCopies)));
+  } 
 
   const tableContainerStyles = {
     maxWidth: "1000px",
@@ -138,7 +176,7 @@ const TableComponent = ({ data, deleteBook }) => {
                 textAlign: "left",
                 width: "250px",
               }}
-              align="center"
+              //align="center"
             >
               Copies
             </TableCell>
@@ -149,7 +187,7 @@ const TableComponent = ({ data, deleteBook }) => {
                 fontSize: "18px",
                 fontWeight: "bold",
                 padding: "12px",
-                textAlign: "left",
+                textAlign: "center",
               }}
             >
               Actions
@@ -163,7 +201,7 @@ const TableComponent = ({ data, deleteBook }) => {
               <TableCell align="center">{item.book_name}</TableCell>
               <TableCell align="center">{item.author_name}</TableCell>
               <TableCell align="center">{item.publication_year}</TableCell>
-              <TableCell align="center">
+              <TableCell align="left">
                 {numberOfCopies[item.book_id]}
               </TableCell>
               <TableCell align="right" style={tdStyles}>
@@ -173,12 +211,14 @@ const TableComponent = ({ data, deleteBook }) => {
                   </IconButton>
                   <UpdateButton item={item} />
                   <DeleteButton item={item} />
-                  <IconButton color="primary">
+                  <IssueButton item={item} updateBookCount = {updateBookCount} />
+                  {/* <IconButton color="primary" title = {"Issue Book"} onClick={() => handleIssue(item)}>
                     <LibraryAddIcon />
-                  </IconButton>
-                  <IconButton color="primary">
+                  </IconButton> */}
+                  {/* <IconButton color="primary" title = {"Return Book"}>
                     <RemoveCircleOutlineIcon />
-                  </IconButton>
+                  </IconButton> */}
+                  <ReturnButton item={item} updateBookCount = {updateBookCount} />
                 </div>
                 <Dialog
                   open={openDialogs[index]}
@@ -191,14 +231,28 @@ const TableComponent = ({ data, deleteBook }) => {
                     },
                   }}
                 >
-                  <DialogTitle>Book name: {item.book_name}</DialogTitle>
+                  <DialogTitle>Book name:{item.book_name}</DialogTitle>
                   <DialogContent>
-                    Book Description: {item.book_description}
+                    Book Description:{item.book_description}
                   </DialogContent>
                   <DialogContent>Author name: {item.author_name}</DialogContent>
                   <DialogContent>
                     Publication year: {item.publication_year}
                   </DialogContent>
+                  <DialogContent>
+                      Categories:
+                      
+                              <ul>
+                      {bookCategories[item.book_id]?.map((category) => (
+                        <li key={category.id}>{category.category_name}</li>
+                      ))}
+                    </ul>
+                        {/* {bookCategories[item.book_id]?.map((category) => (
+                    <span key={category.id}>{category.category_name}, </span>
+                  
+                  ))} */}
+                      
+                    </DialogContent>
 
                   <DialogActions>
                     <Button onClick={() => handleClose(index)} color="primary">
