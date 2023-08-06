@@ -56,7 +56,7 @@ export default function RowAndColumnSpacing() {
 
   const [categoryNames, setCategoryNames] = useState([]);
   const [newCategory, setNewCategory] = useState("");
-  const [numberOfCopies, setNumberOfCopies] = useState("");
+  const [numberOfCopies, setNumberOfCopies] = useState(0);
 
   const resetForm = () => {
     setBook({
@@ -76,7 +76,7 @@ export default function RowAndColumnSpacing() {
       book: {
         ...book,
         publicationYear: parseInt(book.publicationYear),
-      },
+      },      
       category_names: categoryNames,
       no_of_copies: parseInt(numberOfCopies)
     };
@@ -85,7 +85,7 @@ export default function RowAndColumnSpacing() {
       .post("http://localhost:8081/library_system/v1/inventory/books", data)
       .then((response) => {
         console.log("Response from the server:", response.data);
-
+        console.log(data);
         setSnackbarMessage("Book added successfully!");
         setSnackbarSeverity("success");
         setOpenSnackbar(true);
@@ -113,6 +113,7 @@ export default function RowAndColumnSpacing() {
   };
   const handleNumberOfCopiesChange = (e) => {
     setNumberOfCopies(e.target.value);
+    console.log("num "+numberOfCopies);
   };
 
   const addCategory = () => {
