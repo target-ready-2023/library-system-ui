@@ -64,7 +64,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchData();
-  });
+  },[currentPage]);
 
   const handleCloseSnackbar = (event, reason) => {
     if (reason === "clickaway") {
@@ -78,7 +78,7 @@ const Home = () => {
       <Card className="App-Card">
         <h3>Books Directory</h3>
         <div>
-          <TableComponent data={data} />
+          <TableComponent data={data} currentPage={currentPage} />
 
           <ul className="pagination" id="pagination">
             <li className="page-item">
