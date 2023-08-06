@@ -56,7 +56,7 @@ export default function RowAndColumnSpacing() {
 
   const [categoryNames, setCategoryNames] = useState([]);
   const [newCategory, setNewCategory] = useState("");
-  const [numberOfCopies, setNumberOfCopies] = useState("");
+  const [numberOfCopies, setNumberOfCopies] = useState(0);
 
   const resetForm = () => {
     setBook({
@@ -78,13 +78,14 @@ export default function RowAndColumnSpacing() {
         publicationYear: parseInt(book.publicationYear),
       },
       categoryNames,
+      numberOfCopies,
     };
 
     axios
       .post("http://localhost:8081/library_system/v1/inventory/books", data)
       .then((response) => {
         console.log("Response from the server:", response.data);
-
+        console.log(data);
         setSnackbarMessage("Book added successfully!");
         setSnackbarSeverity("success");
         setOpenSnackbar(true);
@@ -112,6 +113,7 @@ export default function RowAndColumnSpacing() {
   };
   const handleNumberOfCopiesChange = (e) => {
     setNumberOfCopies(e.target.value);
+    console.log("num "+numberOfCopies);
   };
 
   const addCategory = () => {
