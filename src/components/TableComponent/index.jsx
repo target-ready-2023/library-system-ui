@@ -34,6 +34,7 @@ const TableComponent = ({ data, currentPage }) => {
   const [fetchDataFlag, setFetchDataFlag] = useState(true);
 
   const [copiesData, setcopiesData] = useState([]);
+  const [bookCategories, setBookCategories] = useState({});
 
   const handleOpen = (index) => {
     const newOpenDialogs = [...openDialogs];
@@ -60,11 +61,30 @@ const TableComponent = ({ data, currentPage }) => {
           `http://localhost:8081/library_system/v1/book/no_of_copies/${item.book_id}`
         );
         copiesData[item.book_id] = response.data;
+        fetchBookCategories(item.book_id);
       } catch (error) {
         copiesData[item.book_id] = "N/A";
       }
     }
     setNumberOfCopies(copiesData);
+  };
+
+  const fetchBookCategories = async (bookId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8081/library_system/v2/categories/${bookId}`
+      );
+      setBookCategories((prevCategories) => ({
+        ...prevCategories,
+        [bookId]: response.data,
+      }));
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      setBookCategories((prevCategories) => ({
+        ...prevCategories,
+        [bookId]: [],
+      }));
+    }
   };
 
   useEffect(() => {
@@ -211,14 +231,28 @@ const TableComponent = ({ data, currentPage }) => {
                     },
                   }}
                 >
-                  <DialogTitle>Book name: {item.book_name}</DialogTitle>
+                  <DialogTitle>Book name:{item.book_name}</DialogTitle>
                   <DialogContent>
-                    Book Description: {item.book_description}
+                    Book Description:{item.book_description}
                   </DialogContent>
                   <DialogContent>Author name: {item.author_name}</DialogContent>
                   <DialogContent>
                     Publication year: {item.publication_year}
                   </DialogContent>
+                  <DialogContent>
+                      Categories:
+                      
+                              <ul>
+                      {bookCategories[item.book_id]?.map((category) => (
+                        <li key={category.id}>{category.category_name}</li>
+                      ))}
+                    </ul>
+                        {/* {bookCategories[item.book_id]?.map((category) => (
+                    <span key={category.id}>{category.category_name}, </span>
+                  
+                  ))} */}
+                      
+                    </DialogContent>
 
                   <DialogActions>
                     <Button onClick={() => handleClose(index)} color="primary">
