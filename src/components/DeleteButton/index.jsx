@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Button, Snackbar, Alert, IconButton} from "@mui/material";
 import { Delete } from "@mui/icons-material";
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 const DeleteButton = ({ item, refreshScreen}) => {
 
@@ -10,6 +15,12 @@ const DeleteButton = ({ item, refreshScreen}) => {
 
   const [data, setData] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [isDialogOpen, setDialogOpen] = useState(false);
+
+  const handleCloseConfirmation = () => {
+    setDialogOpen(false);
+  };
+
   const deleteBook = (book_id) => {
     const deleteApiUrl = `http://localhost:8081/library_system/v1/book/${book_id}`;
 
@@ -39,15 +50,16 @@ const DeleteButton = ({ item, refreshScreen}) => {
         setSnackbarSeverity("error");
         setOpenSnackbar(true);
       });
+      handleCloseConfirmation();
   };
 
   const handleDelete = () => {
     if (!item) {
       console.error("No book selected for delete.");
-      // Handle error or show snackbar
       return;
     }
-    deleteBook(item.book_id);
+    setDialogOpen(true);
+ 
   };
 
   const handleCloseSnackbar = (event, reason) => {
@@ -62,6 +74,24 @@ const DeleteButton = ({ item, refreshScreen}) => {
       <IconButton color="primary" title = {"Delete Book"} onClick={handleDelete}>
         <Delete />
       </IconButton>
+
+      <Dialog open={isDialogOpen} onClose={handleCloseConfirmation}>
+      <DialogTitle>Are you sure you want to delete this book?</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          This action cannot be undone.
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleCloseConfirmation} color="primary">
+          No
+        </Button>
+        <Button onClick={() =>deleteBook(item.book_id)} color="primary" autoFocus>
+          Yes
+        </Button>
+      </DialogActions>
+    </Dialog>
+
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
         open={openSnackbar}

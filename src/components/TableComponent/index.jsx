@@ -26,7 +26,8 @@ import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import IssueButton  from "../IssueButton";
 import ReturnButton from "../ReturnButton";
 
-const TableComponent = ({ data, currentPage }) => {
+const TableComponent = ({ data ,currentPage}) => {
+  //  console.log("table "+prop1);
   const [openDialogs, setOpenDialogs] = useState(
     Array(data.length).fill(false)
   );
@@ -212,12 +213,6 @@ const TableComponent = ({ data, currentPage }) => {
                   <UpdateButton item={item} />
                   <DeleteButton item={item} />
                   <IssueButton item={item} updateBookCount = {updateBookCount} />
-                  {/* <IconButton color="primary" title = {"Issue Book"} onClick={() => handleIssue(item)}>
-                    <LibraryAddIcon />
-                  </IconButton> */}
-                  {/* <IconButton color="primary" title = {"Return Book"}>
-                    <RemoveCircleOutlineIcon />
-                  </IconButton> */}
                   <ReturnButton item={item} updateBookCount = {updateBookCount} />
                 </div>
                 <Dialog
@@ -265,7 +260,7 @@ const TableComponent = ({ data, currentPage }) => {
           ))}
         </TableBody>
       </Table>
-    </TableContainer>
+      </TableContainer>
   );
 };
 
