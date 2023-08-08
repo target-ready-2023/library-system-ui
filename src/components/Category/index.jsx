@@ -19,7 +19,7 @@ import {
 import { FormLabel } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate ,Link} from "react-router-dom";
 
 import { makeStyles } from "@mui/styles";
 import Home from "../Home";
@@ -51,7 +51,6 @@ const Category = () => {
   const nPage = Math.ceil(data.length / recordsPerPage);
   const [open, setOpen] = useState(false);
   const [responseMessage, setResponseMessage] = useState("");
-  const [categoryData, setcategoryData] = useState("false");
 
   const [formData, setFormData] = useState({
     categoryName: "",
@@ -88,8 +87,7 @@ const Category = () => {
   };
 
   const handleButtonClick = (categoryName) => {
-    setcategoryData(!categoryData);
-    navigate("/", { state: { prop1: categoryData, prop2: categoryName } });
+     navigate("/", { state: { prop1: true, prop2: categoryName } });
   };
 
   const handleSubmit = () => {
@@ -191,6 +189,7 @@ const Category = () => {
                   <Button onClick={() => handleButtonClick(item.category_name)} color="primary">
                     {item.category_name}
                   </Button>
+                  
                 </TableCell>
               </TableRow>
             ))}

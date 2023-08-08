@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Delete } from "@mui/icons-material";
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
-import {Snackbar, Alert, IconButton} from "@mui/material";
+import {Button,Snackbar, Alert, IconButton} from "@mui/material";
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 const IssueButton = ({ item, updateBookCount }) => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -10,6 +14,12 @@ const IssueButton = ({ item, updateBookCount }) => {
 
   const [data, setData] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [isDialogOpen, setDialogOpen] = useState(false);
+
+  const handleCloseConfirmation = () => {
+    setDialogOpen(false);
+  };
+
   const IssueBook = (book_id, student_id) => {
     const issueApiUrl = `http://localhost:8081/library_system/v1/inventory/issue/book/${book_id}/${student_id}`;
 
@@ -39,15 +49,16 @@ const IssueButton = ({ item, updateBookCount }) => {
         setSnackbarSeverity("error");
         setOpenSnackbar(true);
       });
+      setDialogOpen(false);
   };
 
   const handleIssue = () => {
     if (!item) {
       console.error("No book selected for Issue.");
-      // Handle error or show snackbar
       return;
     }
-    IssueBook(item.book_id, 1);
+    setDialogOpen(true);
+    
   };
 
   const handleCloseSnackbar = (event, reason) => {
@@ -62,6 +73,19 @@ const IssueButton = ({ item, updateBookCount }) => {
       <IconButton color="primary" title = {"Issue Book"} onClick={handleIssue}>
               <LibraryAddIcon />
       </IconButton>
+
+      <Dialog open={isDialogOpen} onClose={handleCloseConfirmation}>
+      <DialogTitle>Do you wish to take this book?</DialogTitle>
+      <DialogActions>
+        <Button onClick={handleCloseConfirmation} color="primary">
+          No
+        </Button>
+        <Button onClick={() =>IssueBook(item.book_id, 1)} color="primary" autoFocus>
+          Yes
+        </Button>
+      </DialogActions>
+    </Dialog>
+
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
         open={openSnackbar}
