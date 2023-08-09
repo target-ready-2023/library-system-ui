@@ -125,26 +125,13 @@ export default function RowAndColumnSpacing() {
       }
     }
   };
-
+    
   const handleCloseSnackbar = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
     setOpenSnackbar(false);
   };
-  //const addCategory = () => {
-  //  if (newCategory.trim() !== "") {
-   //   setCategoryNames((prevCategories) => [...prevCategories, newCategory]);
-   //   setNewCategory("");
- //   }
-//  };
-
- // const handleCloseSnackbar = (event, reason) => {
- //   if (reason === "clickaway") {
-   //   return;
-  //  }
- //   setOpenSnackbar(false);
- // };
 
   return (
     <Grid container spacing={0} sx={{ height: "90vh" }}>
