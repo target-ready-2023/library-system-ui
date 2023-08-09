@@ -229,7 +229,7 @@ const Category = () => {
             href="#"
             className="page-link"
             onClick={() => {
-              if (currentPage < nPage) changePage(currentPage + 1);
+              if (currentPage < nPage-1) changePage(currentPage + 1);
             }}
           >
             Next

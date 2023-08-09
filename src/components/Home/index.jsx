@@ -8,75 +8,56 @@ import SnackbarComponent from "../SnackbarComponent";
 
 const Home = () => {
   const [data, setData] = useState([]);
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [selectedBook, setSelectedBook] = useState(null);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [pageChange,setPageChange] =useState(false);
   const location = useLocation();
   const prop1 = location.state?.prop1 || false;
   const prop2 = location.state?.prop2 || "";
   const [currentPage, setCurrentPage] = useState(0);
   const [categoryPage,setCategoryPage] = useState(0);
+  const [totalBooks, setTotalBooks] = useState(0);
+  const [categoryBooks,setCategoryBooks] = useState(0);
   const recordsPerPage = 5;
-  const lastIndex = (currentPage + 1) * recordsPerPage;
-  const firstIndex = lastIndex - recordsPerPage;
-  console.log("prop1 "+prop1);
-  const toggleDrawer = () => {
-    setDrawerOpen(!drawerOpen);
-  };
-  const handleToggleDrawer = (item) => {
-    setSelectedBook(item);
-    setDrawerOpen(!drawerOpen);
-  };
-  const generatePaginationNumbers = () => {
-    const numbers = [];
-    for (let i = 1; i <= 1000; i++) {
-      numbers.push(i);
-    }
-    return numbers;
-  };
- 
-  const Numbers = generatePaginationNumbers();
-
+  const no_of_Pages=Math.ceil(totalBooks/recordsPerPage);
+  const pages=Math.ceil(categoryBooks/recordsPerPage);
   const fetchData = async () => {
     
     try {
       if (prop1) {
-        console.log("Hit category page with prop1 "+ prop1);
+
         const response = await axios.get(
           `http://localhost:8081/library_system/v1/book/category/${prop2}?page_number=${categoryPage}`
         );
-      
         setData(response.data);
-       console.log("data "+ response.data);
+   
+        const responseCategory = await axios.get(
+          `http://localhost:8081/library_system/v1/books/category/total_count/${prop2}`
+        );
+        setCategoryBooks(responseCategory.data);
 
       } else {
-        console.log("Hit books directory with page "+currentPage);
         const response = await axios.get(
           `http://localhost:8081/library_system/v1/books_directory?page_number=${currentPage}`
         );
-        if(response.data.length>0 || currentPage===0)
-          setData(response.data);
-        else
-          setCurrentPage(currentPage-1);
-        
+        setData(response.data);       
       }
+      const response = await axios.get(
+        "http://localhost:8081/library_system/v1/books_directory/total_count"
+      );
+      setTotalBooks(response.data);
     } catch (error) {
       console.error(error);
     }
     
   };
   const changePage = (page_number) => {
+  
     if(prop1){
       setCategoryPage(page_number);
-      console.log("changed category page "+categoryPage);
     } 
     else{
       setCurrentPage(page_number);
-      console.log("changed current page "+currentPage);
     }    
-    console.log("first prop1 "+prop1+" prop2 "+prop2 );
   };
 
   useEffect(() => {
@@ -103,14 +84,12 @@ const Home = () => {
                   <a
                     href="#"
                     className="page-link"
-                    onClick={() => {
+                    onClick={(event) => {
+                      event.preventDefault();
                       if(prop1 && categoryPage>0){
-                        console.log("changing category page");
-                        
-                        changePage(categoryPage-1);
+                        changePage(categoryPage - 1);
                       } 
                       else if (currentPage > 0){
-                   
                         changePage(currentPage - 1);
                       } 
                     }}
@@ -122,9 +101,9 @@ const Home = () => {
                    <a
                     href="#"
                     className="page-link"
-                    onClick={() => {
+                    onClick={(event) => {
+                      event.preventDefault();
                       if(prop1){
-                        
                         changePage(categoryPage);
                       } 
                       else {
@@ -141,14 +120,13 @@ const Home = () => {
                   <a
                     href="#"
                     className="page-link"
-                    onClick={() => {
-                      if(prop1){
-                        console.log("changing category page");
-                       
-                        changePage(categoryPage+1);
+                    onClick={(event) => {
+                      event.preventDefault();
+                      if(prop1 && categoryPage< pages-1){
+                        console.log(categoryPage+ " "+pages-1);
+                        changePage(categoryPage + 1);
                       } 
-                      else{
-                        
+                      else if(!prop1 && currentPage< no_of_Pages-1){
                          changePage(currentPage + 1);
                       }
                     }}
