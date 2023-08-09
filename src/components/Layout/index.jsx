@@ -117,9 +117,12 @@ export default function RowAndColumnSpacing() {
   };
 
   const addCategory = () => {
-    if (newCategory.trim() !== "") {
-      setCategoryNames((prevCategories) => [...prevCategories, newCategory]);
-      setNewCategory("");
+    if (newCategory.trim()) {
+      const lowerCaseCategory = newCategory.toLowerCase(); // Convert to lowercase
+      if (!categoryNames.includes(lowerCaseCategory)) {
+        setCategoryNames((prevCategories) => [...prevCategories, lowerCaseCategory]);
+        setNewCategory('');
+      }
     }
   };
 
@@ -128,7 +131,20 @@ export default function RowAndColumnSpacing() {
       return;
     }
     setOpenSnackbar(false);
-  };
+  };
+  //const addCategory = () => {
+  //  if (newCategory.trim() !== "") {
+   //   setCategoryNames((prevCategories) => [...prevCategories, newCategory]);
+   //   setNewCategory("");
+ //   }
+//  };
+
+ // const handleCloseSnackbar = (event, reason) => {
+ //   if (reason === "clickaway") {
+   //   return;
+  //  }
+ //   setOpenSnackbar(false);
+ // };
 
   return (
     <Grid container spacing={0} sx={{ height: "90vh" }}>
