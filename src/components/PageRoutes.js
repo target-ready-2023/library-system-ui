@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom"
-import Student from "./Student"
+import User from "./User"
 import Home from "./Home"
 import About from "./About"
 import Contact from "./Contact"
@@ -11,7 +11,7 @@ const PageRoutes = () => {
           <Route exact path="/" element={<Home />} />
           <Route exact path="/about" element={<About />} />
           <Route exact path="/contact" element={<Contact />} />
-          <Route exact path="/student" element={<Student />} />
+          <Route exact path="/user" element={<User />} />
           <Route exact path="/category" element={<Category />} />
           <Route path='*' element={<NotFound />}/>
         </Routes>
