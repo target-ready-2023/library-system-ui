@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Button, IconButton } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
 import {Snackbar,Alert} from "@mui/material";
@@ -14,6 +18,11 @@ const ReturnButton = ({ item, updateBookCount }) => {
 
   const [data, setData] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [isDialogOpen, setDialogOpen] = useState(false);
+
+  const handleCloseConfirmation = () => {
+    setDialogOpen(false);
+  };
   const ReturnBook = (book_id, student_id) => {
     const issueApiUrl = `http://localhost:8081/library_system/v1/inventory/return/book/${book_id}/${student_id}`;
 
@@ -43,6 +52,7 @@ const ReturnButton = ({ item, updateBookCount }) => {
         setSnackbarSeverity("error");
         setOpenSnackbar(true);
       });
+      setDialogOpen(false);
   };
 
   const handleReturn = () => {
@@ -51,7 +61,7 @@ const ReturnButton = ({ item, updateBookCount }) => {
       // Handle error or show snackbar
       return;
     }
-    ReturnBook(item.book_id, 1);
+    setDialogOpen(true);
   };
 
   const handleCloseSnackbar = (event, reason) => {
@@ -68,7 +78,18 @@ const ReturnButton = ({ item, updateBookCount }) => {
       </Button> */}
       <IconButton color="primary" title = {"Return Book"} onClick={handleReturn}>
             <RemoveCircleOutlineIcon />
-    </IconButton>
+      </IconButton>
+      <Dialog open={isDialogOpen} onClose={handleCloseConfirmation}>
+      <DialogTitle>Do you wish you return this book?</DialogTitle>
+      <DialogActions>
+        <Button onClick={handleCloseConfirmation} color="primary">
+          No
+        </Button>
+        <Button onClick={() => ReturnBook(item.book_id, 1)} color="primary" autoFocus>
+          Yes
+        </Button>
+      </DialogActions>
+    </Dialog>
     <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
         open={openSnackbar}
