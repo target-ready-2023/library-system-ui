@@ -19,8 +19,8 @@ const SideNavigation = () => {
     navigate('/')
     handleClose()
   }
-  const handleStudent = () => {
-    navigate('/student')
+  const handleUser = () => {
+    navigate('/user')
     handleClose()
   }
   
@@ -45,7 +45,7 @@ const SideNavigation = () => {
         }}
       >
         <MenuItem onClick={handleHome}>Home</MenuItem>
-        <MenuItem onClick={handleStudent}>Student</MenuItem>
+        <MenuItem onClick={handleUser}>User</MenuItem>
       </Menu>
     </>
   );
