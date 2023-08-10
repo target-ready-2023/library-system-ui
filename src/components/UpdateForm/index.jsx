@@ -70,12 +70,14 @@ const UpdateForm = ({ selectedBook, handleCloseForm }) => {
   };
 
   const addCategory = () => {
+    const lowercaseCategory = newCategory.trim().toLowerCase(); // Convert to lowercase
     setCategoryNames((prevCategories) => [
       ...prevCategories,
-      newCategory.trim(),
+      lowercaseCategory,
     ]);
     setNewCategory("");
   };
+
   const handleCloseSnackbar = (event, reason) => {
     if (reason === "clickaway") {
       return;
