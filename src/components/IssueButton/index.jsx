@@ -80,7 +80,7 @@ const IssueButton = ({ item, updateBookCount }) => {
         <Button onClick={handleCloseConfirmation} color="primary">
           No
         </Button>
-        <Button onClick={() =>IssueBook(item.book_id, 1)} color="primary" autoFocus>
+        <Button onClick={() =>IssueBook(item.book_id, item.student_id)} color="primary" autoFocus>
           Yes
         </Button>
       </DialogActions>
