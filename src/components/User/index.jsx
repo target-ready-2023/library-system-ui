@@ -10,12 +10,20 @@ import {
   TableRow,
   Paper,
   IconButton,
+  Button,
+  Dialog,
+ Snackbar,
+  Alert 
 } from "@mui/material";
 import AddUser from "../AddUser";
 import DeleteUser from "../DeleteUser";
 
 const User = () => {
   const [users, setUsers] = useState([]);
+  const [openAddUserDialog, setOpenAddUserDialog] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   useEffect(() => {
     fetchUsers();
@@ -31,6 +39,22 @@ const User = () => {
     } catch (error) {
       console.error("Error fetching users:", error);
     }
+  };
+
+  const handleOpenAddUserDialog = () => {
+    setOpenAddUserDialog(true);
+  };
+
+  const handleCloseAddUserDialog = () => {
+    setOpenAddUserDialog(false);
+  };
+
+  const containerStyles = {
+    display: "flex",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    marginBottom: "16px",
+    marginRight: "200px"
   };
 
   const tableContainerStyles = {
@@ -70,6 +94,11 @@ const User = () => {
   return (
     <Card className="App-Card">
       <h3>User directory</h3>
+      <div style={containerStyles}>
+      <Button variant="contained" onClick={handleOpenAddUserDialog}>
+        Add User
+      </Button>
+      </div>
       <TableContainer component={Paper} style={tableContainerStyles}>
         <Table style={tableStyles}>
           <TableHead>
@@ -105,9 +134,9 @@ const User = () => {
                 <TableCell align="center">{user.user_role}</TableCell>
                 <TableCell align="right" style={tdStyles}>
                   <div style={actionButtonsStyles}>
-                    <IconButton>
+                    {/* <IconButton>
                       <AddUser />
-                    </IconButton>
+                    </IconButton> */}
                     <IconButton>
                       <DeleteUser user={user}/>
                     </IconButton>
@@ -118,6 +147,30 @@ const User = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      
+
+      <Dialog open={openAddUserDialog} onClose={handleCloseAddUserDialog}>
+        <AddUser handleCloseDialog={handleCloseAddUserDialog}
+        setSnackbarProps={{
+          setOpen: setSnackbarOpen,
+          setMessage: setSnackbarMessage,
+          setSeverity: setSnackbarSeverity,
+        }} />
+      </Dialog>
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={snackbarOpen}
+        autoHideDuration={8000}
+        onClose={() => setSnackbarOpen(false)}
+      >
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Card>
   );
 };
