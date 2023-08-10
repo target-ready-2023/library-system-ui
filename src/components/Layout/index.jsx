@@ -36,8 +36,14 @@ export default function RowAndColumnSpacing() {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [chipData, setChipData] = useState([]);
+  // const toggleDrawer = () => {
+  //   setDrawerOpen(!drawerOpen);
+  // };
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
+    if (!drawerOpen) {
+      resetForm();
+    }
   };
 
   const handleHome = () => {
@@ -56,7 +62,7 @@ export default function RowAndColumnSpacing() {
 
   const [categoryNames, setCategoryNames] = useState([]);
   const [newCategory, setNewCategory] = useState("");
-  const [numberOfCopies, setNumberOfCopies] = useState(0);
+  const [numberOfCopies, setNumberOfCopies] = useState(1);
 
   const resetForm = () => {
     setBook({
@@ -96,10 +102,30 @@ export default function RowAndColumnSpacing() {
       .catch((error) => {
         console.error("Error posting data:", error);
         console.log("Form data:", data);
-        setSnackbarMessage("Error submitting form.");
-        setSnackbarSeverity("error");
-        setOpenSnackbar(true);
-        setDrawerOpen(false);
+        if (error.response && error.response.status === 409) {
+          const errorData = error.response.data;
+          const errorMessage = errorData.message; // Assuming the error message is the response body
+          setSnackbarMessage(errorMessage);
+          setSnackbarSeverity("error");
+          setOpenSnackbar(true);
+          //resetForm();
+          
+        } else if (error.response && error.response.status === 400) {
+          console.log("Error response data:", error.response.data);
+          const errorMessage = error.response.data;
+          const delimiter = "||";
+          const formattedErrorMessages = errorMessage.join(delimiter);
+          setSnackbarMessage(formattedErrorMessages);
+          setSnackbarSeverity("error");
+          setOpenSnackbar(true);
+          //set
+        } else {
+          setSnackbarMessage("Error submitting form.");
+          resetForm();
+          setSnackbarSeverity("error");
+          setOpenSnackbar(true);
+          //setDrawerOpen(false);
+        }
       });
   };
 
@@ -329,7 +355,12 @@ export default function RowAndColumnSpacing() {
           severity={snackbarSeverity}
           sx={{ width: "100%" }}
         >
-          {snackbarMessage}
+          {snackbarMessage.split("||").map((message, index) => (
+          <span key={index}>
+            {index > 0 && <br />}
+            {message}
+          </span>
+        ))}
         </Alert>
       </Snackbar>
     </Grid>
