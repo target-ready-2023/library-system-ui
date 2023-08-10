@@ -36,8 +36,14 @@ export default function RowAndColumnSpacing() {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [chipData, setChipData] = useState([]);
+  // const toggleDrawer = () => {
+  //   setDrawerOpen(!drawerOpen);
+  // };
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
+    if (!drawerOpen) {
+      resetForm();
+    }
   };
 
   const handleHome = () => {
@@ -102,7 +108,8 @@ export default function RowAndColumnSpacing() {
           setSnackbarMessage(errorMessage);
           setSnackbarSeverity("error");
           setOpenSnackbar(true);
-          //setDrawerOpen(false);
+          //resetForm();
+          
         } else if (error.response && error.response.status === 400) {
           console.log("Error response data:", error.response.data);
           const errorMessage = error.response.data;
@@ -111,7 +118,7 @@ export default function RowAndColumnSpacing() {
           setSnackbarMessage(formattedErrorMessages);
           setSnackbarSeverity("error");
           setOpenSnackbar(true);
-          //setDrawerOpen(false);
+          //set
         } else {
           setSnackbarMessage("Error submitting form.");
           resetForm();
