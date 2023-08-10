@@ -109,7 +109,7 @@ const User = () => {
                       <AddUser />
                     </IconButton>
                     <IconButton>
-                      <DeleteUser />
+                      <DeleteUser user={user}/>
                     </IconButton>
                   </div>
                 </TableCell>
