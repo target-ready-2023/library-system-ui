@@ -47,7 +47,7 @@ export default function RowAndColumnSpacing() {
   };
 
   const handleHome = () => {
-    navigate("/");
+    navigate("/home");
   };
   const handleCategory = () => {
     navigate("/category");

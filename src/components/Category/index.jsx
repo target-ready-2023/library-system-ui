@@ -87,7 +87,7 @@ const Category = () => {
   };
 
   const handleButtonClick = (categoryName) => {
-     navigate("/", { state: { prop1: true, prop2: categoryName } });
+     navigate("/home", { state: { prop1: true, prop2: categoryName } });
   };
 
   const handleSubmit = () => {
