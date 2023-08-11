@@ -9,8 +9,8 @@ import { UserIdContext,LandingPage } from "./LandingPage"
 
 const PageRoutes = () => {
     return (
-      <UserIdContext.Consumer>
-      {(selectedOption) => ( 
+      <LandingPage>
+      
         <Routes>
           
           <Route exact path="/" element={<LandingPage />} />
@@ -21,8 +21,8 @@ const PageRoutes = () => {
           <Route exact path="/category" element={<Category />} />
           <Route path='*' element={<NotFound />} />
         </Routes>
-      )}
-    </UserIdContext.Consumer>
+        </LandingPage>
+    
     )
   }
   export default PageRoutes

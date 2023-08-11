@@ -26,7 +26,7 @@ const useStyles = {
       
     },
   };
- export const LandingPage =()=>{
+ export const LandingPage =({children})=>{
     const navigate=useNavigate();
     const [selectedOption, setSelectedOption] = useState('');
     const [data,setData]=useState([]);
@@ -54,7 +54,7 @@ const useStyles = {
     },[])
     return(
         <UserIdContext.Provider value={selectedOption}>
-            {console.log("selected inside " + selectedOption)}
+            {children}
             <Card className="App-Card">
             <h3>Landing Page</h3>
             <FormControl style={useStyles.formControl}>
