@@ -7,22 +7,24 @@ import {
   DialogActions,
   Button,
   TextField,
+  Select,
+  MenuItem,
+  InputLabel,
 } from "@mui/material";
 
-const AddUser = ({ handleCloseDialog,setSnackbarProps }) => {
+const AddUser = ({ handleCloseDialog, setSnackbarProps }) => {
   const [userId, setUserId] = useState("");
   const [userName, setUserName] = useState("");
   const [userRole, setUserRole] = useState("");
 
-
   const handleAddUser = async () => {
     if (!userId || !userName || !userRole) {
-        // Check if any required field is empty
+ // Check if any required field is empty
         setSnackbarProps.setOpen(true);
         setSnackbarProps.setMessage("Please fill in all fields.");
         setSnackbarProps.setSeverity("error");
-        return; // Do not proceed with submission
-      }
+        return;
+    }
     try {
       const response = await axios.post(
         "http://localhost:8081/library_system/v3/student",
@@ -41,22 +43,18 @@ const AddUser = ({ handleCloseDialog,setSnackbarProps }) => {
       setSnackbarProps.setOpen(true);
       setSnackbarProps.setMessage("User added successfully!");
       setSnackbarProps.setSeverity("success");
-    
     } catch (error) {
       console.error("Error adding user:", error);
       if (error.response && error.response.status === 409) {
-      // User already exists error
-      const errorMessage = error.response.data.message; // Use the error message from the response
-      setSnackbarProps.setOpen(true);
+        const errorMessage = error.response.data.message;
+        setSnackbarProps.setOpen(true);
       setSnackbarProps.setMessage(errorMessage); // Use the error message from the response
       setSnackbarProps.setSeverity("error");
-    } else {
-      console.error("Error adding user:", error);
-    }
+      } else {
+        console.error("Error adding user:", error);
+      }
     }
   };
-
- 
 
   return (
     <>
@@ -78,14 +76,17 @@ const AddUser = ({ handleCloseDialog,setSnackbarProps }) => {
           required
           margin="normal"
         />
-        <TextField
-          label="User Role"
+        <InputLabel>User Role</InputLabel>
+        <Select
           value={userRole}
           onChange={(e) => setUserRole(e.target.value)}
           fullWidth
           required
           margin="normal"
-        />
+        >
+          <MenuItem value="student">Student</MenuItem>
+          <MenuItem value="librarian">Librarian</MenuItem>
+        </Select>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleCloseDialog} color="primary">
@@ -95,7 +96,6 @@ const AddUser = ({ handleCloseDialog,setSnackbarProps }) => {
           Add
         </Button>
       </DialogActions>
-      
     </>
   );
 };
