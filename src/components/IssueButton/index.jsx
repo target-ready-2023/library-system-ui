@@ -21,17 +21,23 @@ const IssueButton = ({ item, updateBookCount }) => {
   };
 
   const IssueBook = (book_id, student_id) => {
-    const issueApiUrl = `http://localhost:8081/library_system/v1/inventory/issue/book/${book_id}/${student_id}`;
+    const issueApiUrl = `http://localhost:8081/library_system/v1/inventory/issue/book`;
+
+    const issueData = {
+      book_id: book_id,
+      student_id: student_id,
+    };
 
     fetch(issueApiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify(issueData),  
     })
       .then((response) => {
         if (!response.ok) {
-          throw new Error("Network response was not ok");
+          throw new Error("Network response was not ok"); 
         }
         console.log("Book Issued successfully.");
         setSnackbarMessage("Book Issued successfully!");
@@ -80,7 +86,7 @@ const IssueButton = ({ item, updateBookCount }) => {
         <Button onClick={handleCloseConfirmation} color="primary">
           No
         </Button>
-        <Button onClick={() =>IssueBook(item.book_id, item.student_id)} color="primary" autoFocus>
+        <Button onClick={() =>IssueBook(item.book_id, 2)} color="primary" autoFocus>
           Yes
         </Button>
       </DialogActions>
