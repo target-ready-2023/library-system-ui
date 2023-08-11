@@ -24,13 +24,19 @@ const ReturnButton = ({ item, updateBookCount }) => {
     setDialogOpen(false);
   };
   const ReturnBook = (book_id, student_id) => {
-    const issueApiUrl = `http://localhost:8081/library_system/v1/inventory/return/book/${book_id}/${student_id}`;
+    const issueApiUrl = `http://localhost:8081/library_system/v1/inventory/return/book`;
+
+    const returnData = {
+      book_id: book_id,
+      student_id: student_id,
+    };
 
     fetch(issueApiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify(returnData),  
     })
       .then((response) => {
         if (!response.ok) {
@@ -85,7 +91,7 @@ const ReturnButton = ({ item, updateBookCount }) => {
         <Button onClick={handleCloseConfirmation} color="primary">
           No
         </Button>
-        <Button onClick={() => ReturnBook(item.book_id, 1)} color="primary" autoFocus>
+        <Button onClick={() => ReturnBook(item.book_id, 2)} color="primary" autoFocus>
           Yes
         </Button>
       </DialogActions>

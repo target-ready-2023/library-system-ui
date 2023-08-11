@@ -26,10 +26,10 @@ import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import IssueButton  from "../IssueButton";
 import ReturnButton from "../ReturnButton";
 
-const TableComponent = ({ data ,currentPage}) => {
+const TableComponent = ({ data ,currentPage,updateData}) => {
   //  console.log("table "+prop1);
   const [openDialogs, setOpenDialogs] = useState(
-    Array(data.length).fill(false)
+    Array(data?.length).fill(false)
   );
   const [numberOfCopies, setNumberOfCopies] = useState([]);
   const [fetchDataFlag, setFetchDataFlag] = useState(true);
@@ -49,7 +49,7 @@ const TableComponent = ({ data ,currentPage}) => {
     setOpenDialogs(newOpenDialogs);
   };
 
-  const dataWithSerialNumber = data.map((item, index) => ({
+  const dataWithSerialNumber = data?.map((item, index) => ({
     ...item,
     serialNumber: currentPage*5 + (index+1),
   }));
@@ -89,7 +89,7 @@ const TableComponent = ({ data ,currentPage}) => {
   };
 
   useEffect(() => {
-    if (fetchDataFlag && data.length>0) {
+    if (fetchDataFlag && data?.length>0) {
       fetchNumberOfCopies();
       setFetchDataFlag(false);
     }
@@ -109,7 +109,7 @@ const TableComponent = ({ data ,currentPage}) => {
       numberOfCopies[bookId] = "N/A";
     }
     setNumberOfCopies(JSON.parse(JSON.stringify(numberOfCopies)));
-  } 
+  }   
 
   const tableContainerStyles = {
     maxWidth: "1000px",
@@ -196,7 +196,7 @@ const TableComponent = ({ data ,currentPage}) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {dataWithSerialNumber.map((item, index) => (
+          {dataWithSerialNumber?.map((item, index) => (
             <TableRow key={item.book_id}>
               <TableCell align="center">{item.serialNumber}</TableCell>
               <TableCell align="center">{item.book_name}</TableCell>
@@ -211,8 +211,8 @@ const TableComponent = ({ data ,currentPage}) => {
                     <VisibilityIcon />
                   </IconButton>
                   <UpdateButton item={item} />
-                  <DeleteButton item={item} />
-                  <IssueButton item={item} updateBookCount = {updateBookCount} />
+                  <DeleteButton item={item} updateData = {updateData}/>
+                  <IssueButton item={item} updateBookCount = {updateBookCount}/>
                   <ReturnButton item={item} updateBookCount = {updateBookCount} />
                 </div>
                 <Dialog

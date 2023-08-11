@@ -44,7 +44,7 @@ const ReadMoreButton = ({ data }) => {
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Book Details</DialogTitle>
         <div>
-          {data.map((item) => (
+          {data?.map((item) => (
             <DialogContent key={item.book_id}>
               {item.book_description}
             </DialogContent>
