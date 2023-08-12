@@ -6,11 +6,14 @@ import Contact from "./Contact"
 import NotFound from "./NotFound"
 import Category from "./Category"
 import { UserIdContext,LandingPage } from "./LandingPage"
+import UserContext from './UserContext';
+import {useState} from 'react';
 
 const PageRoutes = () => {
+  const [userId, setUserId] = useState(null);
     return (
-      <LandingPage>
-      
+      // <LandingPage>
+      <UserContext.Provider value={{ userId, setUserId }}>
         <Routes>
           
           <Route exact path="/" element={<LandingPage />} />
@@ -21,7 +24,8 @@ const PageRoutes = () => {
           <Route exact path="/category" element={<Category />} />
           <Route path='*' element={<NotFound />} />
         </Routes>
-        </LandingPage>
+        </UserContext.Provider>
+        // </LandingPage>
     
     )
   }

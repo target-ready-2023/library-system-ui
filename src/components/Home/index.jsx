@@ -5,7 +5,8 @@ import { Card } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import TableComponent from "../TableComponent";
 import SnackbarComponent from "../SnackbarComponent";
-import { UserIdContext } from "../LandingPage";
+import UserContext from '../UserContext';
+
 
 const Home = () => {
   const [data, setData] = useState([]);
@@ -21,9 +22,12 @@ const Home = () => {
   const recordsPerPage = 5;
   const no_of_Pages=Math.ceil(totalBooks/recordsPerPage);
   const pages=Math.ceil(categoryBooks/recordsPerPage);
-  const user_id = useContext(UserIdContext);
-  console.log("user" +user_id);
+  const { userId,setUserId } = useContext(UserContext);
+  
+
+  
   const fetchData = async () => {
+    console.log("Home"+userId);
     
     try {
       if (prop1) {
@@ -65,7 +69,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchData();
-  },[prop1,currentPage,categoryPage]);
+  },[location]);
 
   const handleCloseSnackbar = (event, reason) => {
     if (reason === "clickaway") {
