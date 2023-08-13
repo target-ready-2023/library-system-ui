@@ -108,7 +108,7 @@ const ReturnButton = ({ item, updateBookCount }) => {
         <Button onClick={handleCloseConfirmation} color="primary">
           No
         </Button>
-        <Button onClick={() => ReturnBook(item.book_id, 1)} color="primary" autoFocus>
+        <Button onClick={() => ReturnBook(item.book_id, 2)} color="primary" autoFocus>
           Yes
         </Button>
       </DialogActions>

@@ -110,7 +110,7 @@ const Category = () => {
     }
   };
 
-  const dataWithSerialNumber = data.map((item, index) => ({
+  const dataWithSerialNumber = data?.map((item, index) => ({
     ...item,
     serialNumber: currentPage*10 + (index+1),
   }));

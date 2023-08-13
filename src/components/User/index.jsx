@@ -129,7 +129,7 @@ const User = () => {
           <TableBody>
             {users.map((user, index) => (
               <TableRow key={user.user_id}>
-                <TableCell align="center">{index + 1}</TableCell>
+                <TableCell align="center" >{index + 1}</TableCell>
                 <TableCell align="center">{user.user_name}</TableCell>
                 <TableCell align="center">{user.user_role}</TableCell>
                 <TableCell align="right" style={tdStyles}>

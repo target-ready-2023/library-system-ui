@@ -24,39 +24,23 @@ const IssueButton = ({ item, updateBookCount }) => {
     setDialogOpen(false);
   };
 
+  const IssueBook = (book_id, student_id) => {
+    const issueApiUrl = `http://localhost:8081/library_system/v1/inventory/issue/book`;
 
-
-
-
-  // const fetchData = async () => {
-  //   const response = await axios.get(
-  //     `http://localhost:8081/library_system/v3/users`
-  //   );
-  //   setData(response.data);
-  // };
-
-
-  const IssueBook = async (book_id, student_id) => {
-   console.log("Hi"+userId);
-   console.log(book_id);
-   
-   const response = `http://localhost:8081/library_system/v1/inventory/issue/book`;
-    const issueData={
-      book_id:book_id,
-      student_id:userId,
+    const issueData = {
+      book_id: book_id,
+      student_id: userId,
     };
-   
-    fetch(response, {
+    fetch(issueApiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body:JSON.stringify(issueData),
+      body: JSON.stringify(issueData),  
     })
       .then((response) => {
         if (!response.ok) {
-          console.log(response);
-          throw new Error(data.message);
+          throw new Error("Network response was not ok");
         }
         console.log(response);
         console.log(response.data);

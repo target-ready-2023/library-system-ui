@@ -84,7 +84,7 @@ const Home = () => {
       <Card className="App-Card">
         <h3>Books Directory</h3>
         <div>
-          <TableComponent data={data} currentPage={currentPage}/>
+          <TableComponent data={data} currentPage={currentPage} updateData={()=>{fetchData()}}/>
 
           <div>
           <ul className="pagination" id="pagination">
