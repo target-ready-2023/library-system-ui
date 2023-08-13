@@ -17,14 +17,24 @@ import {
 } from "@mui/material";
 import AddUser from "../AddUser";
 import DeleteUser from "../DeleteUser";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+// import Dialog from "@mui/material/Dialog";
+// import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
 
-const User = () => {
+
+const User = (data) => {
   const [users, setUsers] = useState([]);
+  const [bookUser, setBookUser] = useState([]);
   const [openAddUserDialog, setOpenAddUserDialog] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-
+  const [openDialogs, setOpenDialogs] = useState(
+    Array(data?.length).fill(false)
+  );
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -39,6 +49,41 @@ const User = () => {
     } catch (error) {
       console.error("Error fetching users:", error);
     }
+  };
+
+  const fetchBooksByUserId  = async (user_id) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8081/library_system/v3/books/${user_id}`
+      );
+      setBookUser((prevBooks) => ({
+        ...prevBooks,
+        [user_id]: response.data,
+        
+      }));
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error fetching books:", error);
+      setBookUser((prevBooks) => ({
+        ...prevBooks,
+        [user_id]: [],
+      }));
+    }
+  };
+
+
+  const handleOpen = (index, userId) => {
+    const newOpenDialogs = [...openDialogs];
+    newOpenDialogs[index] = true;
+    setOpenDialogs(newOpenDialogs);
+    console.log(userId);
+    fetchBooksByUserId(userId);
+  };
+
+  const handleClose = (index) => {
+    const newOpenDialogs = [...openDialogs];
+    newOpenDialogs[index] = false;
+    setOpenDialogs(newOpenDialogs);
   };
 
   const handleOpenAddUserDialog = () => {
@@ -132,15 +177,44 @@ const User = () => {
                 <TableCell align="center" >{index + 1}</TableCell>
                 <TableCell align="center">{user.user_name}</TableCell>
                 <TableCell align="center">{user.user_role}</TableCell>
-                <TableCell align="right" style={tdStyles}>
-                  <div style={actionButtonsStyles}>
+                <TableCell align="center" style={tdStyles}>
+                  <div style={actionButtonsStyles} align="center">
                     {/* <IconButton>
                       <AddUser />
                     </IconButton> */}
                     <IconButton>
                       <DeleteUser user={user}/>
                     </IconButton>
+                    <IconButton onClick={() => handleOpen(index,user.user_id)} color="primary">
+                      <VisibilityIcon />
+                    </IconButton>
                   </div>
+                  <Dialog
+                  open={openDialogs[index]}
+                  onClose={() => handleClose(index)}
+                  PaperProps={{
+                    style: {
+                      maxWidth: "500px",
+                      width: "100%",
+                      padding: "20px",
+                    },
+                  }}
+                >
+                  <DialogTitle>Issued books:</DialogTitle>
+                  <DialogContent>
+  
+                      <ul>
+                        {bookUser[user.user_id]?.map((bookName, idx) => (
+                          <li key={idx}>{bookName}</li>
+                        ))}
+                      </ul>
+                    </DialogContent>
+                    <DialogActions>
+                    <Button onClick={() => handleClose(index)} color="primary">
+                      Close
+                    </Button>
+                  </DialogActions>
+                </Dialog>
                 </TableCell>
               </TableRow>
             ))}
