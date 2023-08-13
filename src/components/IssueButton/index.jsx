@@ -40,28 +40,28 @@ const IssueButton = ({ item, updateBookCount }) => {
    console.log("Hi"+userId);
    console.log(book_id);
    
-   const issueApiUrl = `http://localhost:8081/library_system/v1/inventory/issue/book`;
+   const response = `http://localhost:8081/library_system/v1/inventory/issue/book`;
     const issueData={
       book_id:book_id,
       student_id:userId,
     };
    
-    fetch(issueApiUrl, {
+    fetch(response, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body:JSON.stringify(issueData),
     })
-      .then((issueApiUrl) => {
-        // if (response.conflict) {
-        //   console.log(response);
-        //   throw new Error("Network response was not ok");
-        // }
-        console.log(issueApiUrl);
-        console.log(issueApiUrl.data);
+      .then((response) => {
+        if (!response.ok) {
+          console.log(response);
+          throw new Error(data.message);
+        }
+        console.log(response);
+        console.log(response.data);
         console.log("Book Issued successfully.");
-        setSnackbarMessage("Book Issued successfully!");
+        setSnackbarMessage("Book Issued successfully.");
         setSnackbarSeverity("success");
         setOpenSnackbar(true);
         setData((prevData) =>
@@ -77,12 +77,12 @@ const IssueButton = ({ item, updateBookCount }) => {
           setSnackbarMessage(errorMessage);
           setSnackbarSeverity("error");
           setOpenSnackbar(true);
-          //resetForm();
+          // resetForm();
           
         }
         else{
         console.error("Error Issuing the book:", error.message);
-        setSnackbarMessage("Error Issuing Book");
+        setSnackbarMessage("Book already issued by the user!");
         setSnackbarSeverity("error");
         setOpenSnackbar(true);}
       });

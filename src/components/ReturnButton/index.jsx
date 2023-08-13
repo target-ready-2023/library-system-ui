@@ -27,14 +27,14 @@ const ReturnButton = ({ item, updateBookCount }) => {
     setDialogOpen(false);
   };
   const ReturnBook = (book_id, student_id) => {
-    const issueApiUrl = `http://localhost:8081/library_system/v1/inventory/return/book`;
+    const returnApiUrl = `http://localhost:8081/library_system/v1/inventory/return/book`;
     const returnData={
       book_id:book_id,
       student_id:userId,
     };
    
 
-    fetch(issueApiUrl, {
+    fetch(returnApiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -42,7 +42,11 @@ const ReturnButton = ({ item, updateBookCount }) => {
       body:JSON.stringify(returnData),
     })
       .then((response) => {
-        
+        if(!response.ok){
+               console.log(response);
+          throw new Error(data.message);
+          
+        }
         console.log(response);
         setSnackbarMessage("Book Returned successfully!");
         console.log(response.data);
@@ -66,7 +70,7 @@ const ReturnButton = ({ item, updateBookCount }) => {
         }
         else{
         console.error("Error Returning the book:", error.message);
-        setSnackbarMessage("Error Returning the Book");
+        setSnackbarMessage("Book was already returned!");
         setSnackbarSeverity("error");
         setOpenSnackbar(true);
         }

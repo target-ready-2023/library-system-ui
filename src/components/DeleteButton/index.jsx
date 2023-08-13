@@ -7,7 +7,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-const DeleteButton = ({ item, refreshScreen}) => {
+const DeleteButton = ({ item, updateData}) => {
 
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -42,7 +42,7 @@ const DeleteButton = ({ item, refreshScreen}) => {
           prevData.filter((book) => book.book_id !== book_id)
         );
         setDrawerOpen(false);
-        refreshScreen();
+        updateData();
       })
       .catch((error) => {
         console.error("Error deleting the book:", error.message);
