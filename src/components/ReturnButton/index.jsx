@@ -10,6 +10,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
 import {Snackbar,Alert} from "@mui/material";
+import { useContext } from "react";
+import UserContext from '../UserContext';
 
 const ReturnButton = ({ item, updateBookCount }) => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -19,31 +21,35 @@ const ReturnButton = ({ item, updateBookCount }) => {
   const [data, setData] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isDialogOpen, setDialogOpen] = useState(false);
+  const { userId,setUserId } = useContext(UserContext);
 
   const handleCloseConfirmation = () => {
     setDialogOpen(false);
   };
   const ReturnBook = (book_id, student_id) => {
-    const issueApiUrl = `http://localhost:8081/library_system/v1/inventory/return/book`;
-
-    const returnData = {
-      book_id: book_id,
-      student_id: student_id,
+    const returnApiUrl = `http://localhost:8081/library_system/v1/inventory/return/book`;
+    const returnData={
+      book_id:book_id,
+      student_id:userId,
     };
+   
 
-    fetch(issueApiUrl, {
+    fetch(returnApiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(returnData),  
+      body:JSON.stringify(returnData),
     })
       .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
+        if(!response.ok){
+               console.log(response);
+          throw new Error(data.message);
+          
         }
-        console.log("Book Returned successfully.");
+        console.log(response);
         setSnackbarMessage("Book Returned successfully!");
+        console.log(response.data);
         setSnackbarSeverity("success");
         setOpenSnackbar(true);
         setData((prevData) =>
@@ -53,10 +59,21 @@ const ReturnButton = ({ item, updateBookCount }) => {
         updateBookCount(book_id);
       })
       .catch((error) => {
+        if (error.response && error.response.status === 404) {
+          const errorData = error.response.data;
+          const errorMessage = errorData.message; // Assuming the error message is the response body
+          setSnackbarMessage(errorMessage);
+          setSnackbarSeverity("error");
+          setOpenSnackbar(true);
+          //resetForm();
+          
+        }
+        else{
         console.error("Error Returning the book:", error.message);
-        setSnackbarMessage("Error Returning the Book");
+        setSnackbarMessage("Book was already returned!");
         setSnackbarSeverity("error");
         setOpenSnackbar(true);
+        }
       });
       setDialogOpen(false);
   };

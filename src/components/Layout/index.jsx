@@ -47,7 +47,7 @@ export default function RowAndColumnSpacing() {
   };
 
   const handleHome = () => {
-    navigate("/");
+    navigate("/home");
   };
   const handleCategory = () => {
     navigate("/category");
@@ -63,6 +63,7 @@ export default function RowAndColumnSpacing() {
   const [categoryNames, setCategoryNames] = useState([]);
   const [newCategory, setNewCategory] = useState("");
   const [numberOfCopies, setNumberOfCopies] = useState(1);
+  
 
   const resetForm = () => {
     setBook({
@@ -92,11 +93,13 @@ export default function RowAndColumnSpacing() {
       .then((response) => {
         console.log("Response from the server:", response.data);
         console.log(data);
-        setSnackbarMessage("Book added successfully!");
+        setSnackbarMessage("Book Added Successfully");
         setSnackbarSeverity("success");
         setOpenSnackbar(true);
         setDrawerOpen(false);
         resetForm();  
+        handleHome();
+
       })
 
       .catch((error) => {

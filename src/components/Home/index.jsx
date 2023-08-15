@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useContext } from "react";
 import axios from "axios";
 import "./home.css";
 import { Card } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import TableComponent from "../TableComponent";
 import SnackbarComponent from "../SnackbarComponent";
+import UserContext from '../UserContext';
+
 
 const Home = () => {
   const [data, setData] = useState([]);
@@ -20,7 +22,12 @@ const Home = () => {
   const recordsPerPage = 5;
   const no_of_Pages=Math.ceil(totalBooks/recordsPerPage);
   const pages=Math.ceil(categoryBooks/recordsPerPage);
+  const { userId,setUserId } = useContext(UserContext);
+  
+
+  
   const fetchData = async () => {
+    console.log("Home"+userId);
     
     try {
       if (prop1) {
@@ -62,7 +69,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchData();
-  },[prop1,currentPage,categoryPage]);
+  },[location]);
 
   const handleCloseSnackbar = (event, reason) => {
     if (reason === "clickaway") {
@@ -72,7 +79,8 @@ const Home = () => {
   };
 
   return (
-    <div sx={{ paddingTop: "70px", fontFamily: "TimesNewRoman" }}>
+
+      <div sx={{ paddingTop: "70px", fontFamily: "TimesNewRoman" }}>
       <Card className="App-Card">
         <h3>Books Directory</h3>
         <div>
@@ -146,6 +154,7 @@ const Home = () => {
         </div>
       </Card>
     </div>
+    
   );
 };
 export default Home;

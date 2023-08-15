@@ -6,6 +6,8 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { useContext } from "react";
+import UserContext from '../UserContext';
 
 const IssueButton = ({ item, updateBookCount }) => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -15,6 +17,8 @@ const IssueButton = ({ item, updateBookCount }) => {
   const [data, setData] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isDialogOpen, setDialogOpen] = useState(false);
+  const { userId,setUserId } = useContext(UserContext);
+  
 
   const handleCloseConfirmation = () => {
     setDialogOpen(false);
@@ -25,9 +29,8 @@ const IssueButton = ({ item, updateBookCount }) => {
 
     const issueData = {
       book_id: book_id,
-      student_id: student_id,
+      student_id: userId,
     };
-
     fetch(issueApiUrl, {
       method: "POST",
       headers: {
@@ -37,10 +40,12 @@ const IssueButton = ({ item, updateBookCount }) => {
     })
       .then((response) => {
         if (!response.ok) {
-          throw new Error("Network response was not ok"); 
+          throw new Error("Network response was not ok");
         }
+        console.log(response);
+        console.log(response.data);
         console.log("Book Issued successfully.");
-        setSnackbarMessage("Book Issued successfully!");
+        setSnackbarMessage("Book Issued successfully.");
         setSnackbarSeverity("success");
         setOpenSnackbar(true);
         setData((prevData) =>
@@ -50,10 +55,20 @@ const IssueButton = ({ item, updateBookCount }) => {
         updateBookCount(book_id);
       })
       .catch((error) => {
+        if (error.response && error.response.status === 409) {
+          const errorData = error.response.data;
+          const errorMessage = errorData.message; // Assuming the error message is the response body
+          setSnackbarMessage(errorMessage);
+          setSnackbarSeverity("error");
+          setOpenSnackbar(true);
+          // resetForm();
+          
+        }
+        else{
         console.error("Error Issuing the book:", error.message);
-        setSnackbarMessage("Error Issuing Book");
+        setSnackbarMessage("Book already issued by the user!");
         setSnackbarSeverity("error");
-        setOpenSnackbar(true);
+        setOpenSnackbar(true);}
       });
       setDialogOpen(false);
   };
@@ -86,7 +101,7 @@ const IssueButton = ({ item, updateBookCount }) => {
         <Button onClick={handleCloseConfirmation} color="primary">
           No
         </Button>
-        <Button onClick={() =>IssueBook(item.book_id, 2)} color="primary" autoFocus>
+        <Button onClick={() =>IssueBook(item.book_id, userId)} color="primary" autoFocus>
           Yes
         </Button>
       </DialogActions>
