@@ -21,7 +21,8 @@ const ReturnButton = ({ item, updateBookCount }) => {
   const [data, setData] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isDialogOpen, setDialogOpen] = useState(false);
-  const { userId,setUserId } = useContext(UserContext);
+  // const { userId,setUserId } = useContext(UserContext);
+  const userId=localStorage.getItem("userId");
 
   const handleCloseConfirmation = () => {
     setDialogOpen(false);
@@ -48,7 +49,7 @@ const ReturnButton = ({ item, updateBookCount }) => {
           
         }
         console.log(response);
-        setSnackbarMessage("Book Returned successfully!");
+        setSnackbarMessage(`Book Returned successfully by ${userId}!`);
         console.log(response.data);
         setSnackbarSeverity("success");
         setOpenSnackbar(true);
@@ -69,10 +70,10 @@ const ReturnButton = ({ item, updateBookCount }) => {
           
         }
         else{
-        console.error("Error Returning the book:", error.message);
-        setSnackbarMessage("Book was already returned!");
-        setSnackbarSeverity("error");
-        setOpenSnackbar(true);
+          console.error(`Error Returning the book by ${userId}:`, error.message);
+          setSnackbarMessage("Book was already returned!");
+          setSnackbarSeverity("error");
+          setOpenSnackbar(true);
         }
       });
       setDialogOpen(false);

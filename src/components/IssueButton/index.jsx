@@ -17,8 +17,8 @@ const IssueButton = ({ item, updateBookCount }) => {
   const [data, setData] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isDialogOpen, setDialogOpen] = useState(false);
-  const { userId,setUserId } = useContext(UserContext);
-  
+ // const { userId,setUserId } = useContext(UserContext);
+ const userId=localStorage.getItem("userId");
 
   const handleCloseConfirmation = () => {
     setDialogOpen(false);
@@ -45,7 +45,7 @@ const IssueButton = ({ item, updateBookCount }) => {
         console.log(response);
         console.log(response.data);
         console.log("Book Issued successfully.");
-        setSnackbarMessage("Book Issued successfully.");
+        setSnackbarMessage(`Book Issued successfully for ${userId}.`);
         setSnackbarSeverity("success");
         setOpenSnackbar(true);
         setData((prevData) =>
@@ -65,8 +65,8 @@ const IssueButton = ({ item, updateBookCount }) => {
           
         }
         else{
-        console.error("Error Issuing the book:", error.message);
-        setSnackbarMessage("Book already issued by the user!");
+        console.error(`Error Issuing the book for user ${userId}:`, error.message);
+        setSnackbarMessage(`Error Issuing the book for user ${userId}:`);
         setSnackbarSeverity("error");
         setOpenSnackbar(true);}
       });

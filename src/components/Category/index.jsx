@@ -27,7 +27,7 @@ import Home from "../Home";
 const useStyles = makeStyles((theme) => ({
   customButton: {
     height: "auto",
-    // Add more custom styles here as needed
+
   },
 }));
 
