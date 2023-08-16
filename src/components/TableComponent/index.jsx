@@ -10,6 +10,8 @@ import {
   TableRow,
   Paper,
   IconButton,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -23,18 +25,18 @@ import UpdateButton from "../UpdateButton";
 import DeleteButton from "../DeleteButton";
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import IssueButton  from "../IssueButton";
+import IssueButton from "../IssueButton";
 import ReturnButton from "../ReturnButton";
 
-const TableComponent = ({ data ,currentPage,updateData}) => {
-  //  console.log("table "+prop1);
+const TableComponent = ({ data, currentPage, updateData }) => {
   const [openDialogs, setOpenDialogs] = useState(
     Array(data?.length).fill(false)
   );
   const [numberOfCopies, setNumberOfCopies] = useState([]);
   const [fetchDataFlag, setFetchDataFlag] = useState(true);
-
-  const [copiesData, setcopiesData] = useState([]);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [bookCategories, setBookCategories] = useState({});
 
   const handleOpen = (index) => {
@@ -51,8 +53,17 @@ const TableComponent = ({ data ,currentPage,updateData}) => {
 
   const dataWithSerialNumber = data?.map((item, index) => ({
     ...item,
-    serialNumber: currentPage*5 + (index+1),
+    serialNumber: currentPage * 5 + (index + 1),
   }));
+
+  const showSnackbar = (message, severity) => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setOpenSnackbar(true);
+  };
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
 
   const fetchNumberOfCopies = async () => {
     const copiesData = {};
@@ -89,7 +100,7 @@ const TableComponent = ({ data ,currentPage,updateData}) => {
   };
 
   useEffect(() => {
-    if (fetchDataFlag && data?.length>0) {
+    if (fetchDataFlag && data?.length > 0) {
       fetchNumberOfCopies();
       setFetchDataFlag(false);
     }
@@ -97,9 +108,9 @@ const TableComponent = ({ data ,currentPage,updateData}) => {
 
   useEffect(() => {
     setFetchDataFlag(true);
-  },[data]);
+  }, [data]);
 
-  const updateBookCount = async (bookId) =>{
+  const updateBookCount = async (bookId) => {
     try {
       const response = await axios.get(
         `http://localhost:8081/library_system/v1/book/no_of_copies/${bookId}`
@@ -109,7 +120,7 @@ const TableComponent = ({ data ,currentPage,updateData}) => {
       numberOfCopies[bookId] = "N/A";
     }
     setNumberOfCopies(JSON.parse(JSON.stringify(numberOfCopies)));
-  }   
+  };
 
   const tableContainerStyles = {
     maxWidth: "1000px",
@@ -150,117 +161,202 @@ const TableComponent = ({ data ,currentPage,updateData}) => {
   };
 
   return (
-    <TableContainer component={Paper} style={tableContainerStyles}>
-      <Table style={tableStyles}>
-        <TableHead>
-          <TableRow>
-            <TableCell style={tableHeaderCellStyles} align="center">
-              No.
-            </TableCell>
-            <TableCell style={tableHeaderCellStyles} align="center">
-              Book Name
-            </TableCell>
-            <TableCell style={tableHeaderCellStyles} align="center">
-              Author Name
-            </TableCell>
-            <TableCell style={tableHeaderCellStyles} align="center">
-              Publication Year
-            </TableCell>
-
-            <TableCell
-              style={{
-                backgroundColor: "#f2f2f2",
-                borderBottom: "1px solid #ddd",
-                fontSize: "18px",
-                fontWeight: "bold",
-                padding: "12px",
-                textAlign: "left",
-                width: "250px",
-              }}
-              //align="center"
-            >
-              Copies
-            </TableCell>
-            <TableCell
-              style={{
-                backgroundColor: "#f2f2f2",
-                borderBottom: "1px solid #ddd",
-                fontSize: "18px",
-                fontWeight: "bold",
-                padding: "12px",
-                textAlign: "center",
-              }}
-            >
-              Actions
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {dataWithSerialNumber?.map((item, index) => (
-            <TableRow key={item.book_id}>
-              <TableCell align="center">{item.serialNumber}</TableCell>
-              <TableCell align="center">{item.book_name}</TableCell>
-              <TableCell align="center">{item.author_name}</TableCell>
-              <TableCell align="center">{item.publication_year}</TableCell>
-              <TableCell align="left">
-                {numberOfCopies[item.book_id]}
+    <>
+      <TableContainer component={Paper} style={tableContainerStyles}>
+        <Table style={tableStyles}>
+          <TableHead>
+            <TableRow>
+              <TableCell style={tableHeaderCellStyles} align="center">
+                No.
               </TableCell>
-              <TableCell align="right" style={tdStyles}>
-                <div style={actionButtonsStyles}>
-                  <IconButton onClick={() => handleOpen(index)} color="primary">
-                    <VisibilityIcon />
-                  </IconButton>
-                  <UpdateButton item={item} />
-                  <DeleteButton item={item} updateData = {updateData}/>
-                  <IssueButton item={item} updateBookCount = {updateBookCount}/>
-                  <ReturnButton item={item} updateBookCount = {updateBookCount} />
-                </div>
-                <Dialog
-                  open={openDialogs[index]}
-                  onClose={() => handleClose(index)}
-                  PaperProps={{
-                    style: {
-                      maxWidth: "500px",
-                      width: "100%",
-                      padding: "20px",
-                    },
-                  }}
-                >
-                  <DialogTitle>Book name:{item.book_name}</DialogTitle>
-                  <DialogContent>
-                    Book Description:{item.book_description}
-                  </DialogContent>
-                  <DialogContent>Author name: {item.author_name}</DialogContent>
-                  <DialogContent>
-                    Publication year: {item.publication_year}
-                  </DialogContent>
-                  <DialogContent>
-                      Categories:
-                      
-                              <ul>
-                      {bookCategories[item.book_id]?.map((category) => (
-                        <li key={category.id}>{category.category_name}</li>
-                      ))}
-                    </ul>
-                        {/* {bookCategories[item.book_id]?.map((category) => (
-                    <span key={category.id}>{category.category_name}, </span>
-                  
-                  ))} */}
-                      
-                    </DialogContent>
+              <TableCell style={tableHeaderCellStyles} align="center">
+                Book Name
+              </TableCell>
+              <TableCell style={tableHeaderCellStyles} align="center">
+                Author Name
+              </TableCell>
+              <TableCell style={tableHeaderCellStyles} align="center">
+                Publication Year
+              </TableCell>
 
-                  <DialogActions>
-                    <Button onClick={() => handleClose(index)} color="primary">
-                      Close
-                    </Button>
-                  </DialogActions>
-                </Dialog>
+              <TableCell
+                style={{
+                  backgroundColor: "#f2f2f2",
+                  borderBottom: "1px solid #ddd",
+                  fontSize: "18px",
+                  fontWeight: "bold",
+                  padding: "12px",
+                  textAlign: "left",
+                  width: "250px",
+                }}
+                //align="center"
+              >
+                Copies
+              </TableCell>
+              <TableCell
+                style={{
+                  backgroundColor: "#f2f2f2",
+                  borderBottom: "1px solid #ddd",
+                  fontSize: "18px",
+                  fontWeight: "bold",
+                  padding: "12px",
+                  textAlign: "center",
+                }}
+              >
+                Actions
               </TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHead>
+          <TableBody>
+            {dataWithSerialNumber?.map((item, index) => (
+              <TableRow key={item.book_id}>
+                <TableCell align="center">{item.serialNumber}</TableCell>
+                <TableCell align="center">{item.book_name}</TableCell>
+                <TableCell align="center">{item.author_name}</TableCell>
+                <TableCell align="center">{item.publication_year}</TableCell>
+                <TableCell align="left">
+                  {numberOfCopies[item.book_id]}
+                </TableCell>
+                <TableCell align="right" style={tdStyles}>
+                  <div style={actionButtonsStyles}>
+                    <IconButton
+                      onClick={() => handleOpen(index)}
+                      color="primary"
+                    >
+                      <VisibilityIcon />
+                    </IconButton>
+                    <UpdateButton item={item} showSnackbar={showSnackbar} />
+                    <DeleteButton item={item} updateData={updateData} />
+                    <IssueButton
+                      item={item}
+                      updateBookCount={updateBookCount}
+                    />
+                    <ReturnButton
+                      item={item}
+                      updateBookCount={updateBookCount}
+                    />
+                  </div>
+                  <Dialog
+                    open={openDialogs[index]}
+                    onClose={() => handleClose(index)}
+                    PaperProps={{
+                      style: {
+                        maxWidth: "500px",
+                        width: "100%",
+                        padding: "20px",
+                      },
+                    }}
+                  >
+                    <DialogTitle style={{ fontWeight: "bold", font: "Arial" }}>
+                      BOOK DETAILS
+                    </DialogTitle>
+                    <DialogContent
+                      style={{
+                        maxHeight: "400px",
+                        overflowY: "scroll",
+                      }}
+                    >
+                      <div
+                        style={{
+                          marginBottom: "10px",
+                          borderBottom: "1px solid #ddd",
+                          paddingBottom: "5px",
+                        }}
+                      >
+                        <strong>Book Name:</strong> {item.book_name}
+                      </div>
+                      <div
+                        style={{
+                          marginBottom: "10px",
+                          borderBottom: "1px solid #ddd",
+                          paddingBottom: "5px",
+                        }}
+                      >
+                        <strong>Book Description:</strong>{" "}
+                        {item.book_description}
+                      </div>
+                      <div
+                        style={{
+                          marginBottom: "10px",
+                          borderBottom: "1px solid #ddd",
+                          paddingBottom: "5px",
+                        }}
+                      >
+                        <strong>Author Name:</strong> {item.author_name}
+                      </div>
+                      <div
+                        style={{
+                          marginBottom: "10px",
+                          borderBottom: "1px solid #ddd",
+                          paddingBottom: "5px",
+                        }}
+                      >
+                        <strong>Publication Year:</strong>{" "}
+                        {item.publication_year}
+                      </div>
+                      <div
+                        style={{
+                          marginBottom: "10px",
+                          borderBottom: "1px solid #ddd",
+                          paddingBottom: "5px",
+                        }}
+                      >
+                        <strong>Categories:</strong>
+                        <ul
+                          style={{
+                            paddingLeft: "20px",
+                            listStyleType: "disc",
+                            marginBottom: 0,
+                          }}
+                        >
+                          {bookCategories[item.book_id]?.map((category) => (
+                            <li key={category.id}>
+                              {category.category_name.charAt(0).toUpperCase() +
+                                category.category_name.slice(1).toLowerCase()}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </DialogContent>
+
+                    <DialogActions>
+                      <Button
+                        onClick={() => handleClose(index)}
+                        style={{ backgroundColor: "#6c88c8" }}
+                        variant="contained"
+                        color="primary"
+                      >
+                        Close
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </TableContainer>
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+          style={{ textAlign: "left" }}
+        >
+          {snackbarMessage.split("||").map((message, index) => (
+            <span key={index}>
+              {index > 0 && <br />}
+              {message}
+            </span>
+          ))}
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
 
