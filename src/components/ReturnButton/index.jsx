@@ -48,7 +48,7 @@ const ReturnButton = ({ item, updateBookCount }) => {
           
         }
         console.log(response);
-        setSnackbarMessage("Book Returned successfully!");
+        setSnackbarMessage(`Book Returned successfully by ${userId}!`);
         console.log(response.data);
         setSnackbarSeverity("success");
         setOpenSnackbar(true);
@@ -69,10 +69,10 @@ const ReturnButton = ({ item, updateBookCount }) => {
           
         }
         else{
-        console.error("Error Returning the book:", error.message);
-        setSnackbarMessage("Book was already returned!");
-        setSnackbarSeverity("error");
-        setOpenSnackbar(true);
+          console.error(`Error Returning the book by ${userId}:`, error.message);
+          setSnackbarMessage("Book was already returned!");
+          setSnackbarSeverity("error");
+          setOpenSnackbar(true);
         }
       });
       setDialogOpen(false);

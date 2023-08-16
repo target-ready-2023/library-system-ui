@@ -30,7 +30,7 @@ function AddButton({ showSnackbar }) {
   const [categoryNames, setCategoryNames] = useState([]);
   const [newCategory, setNewCategory] = useState("");
   const [numberOfCopies, setNumberOfCopies] = useState(0);
-
+  const userId=localStorage.getItem("userId");
   const [book, setBook] = useState({
     bookName: "",
     bookDescription: "",
@@ -139,6 +139,7 @@ function AddButton({ showSnackbar }) {
             fontFamily: "Arial",
           }}
           onClick={toggleDialog}
+          disabled={!userId}
         >
           Add Book
         </Button>

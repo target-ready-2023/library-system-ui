@@ -16,8 +16,6 @@ import {
   Alert,
   Icon,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import AddUser from "../AddUser";
 import DeleteUser from "../DeleteUser";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import PeopleIcon from "@mui/icons-material/People";
@@ -38,7 +36,7 @@ const User = (data) => {
   const [openDialogs, setOpenDialogs] = useState(
     Array(data?.length).fill(false)
   );
-  const navigate = useNavigate();
+  
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: "white",
     padding: theme.spacing(1),
@@ -80,10 +78,6 @@ const User = (data) => {
       }));
     }
   };
-  const handleUser = () => {
-    navigate("/user");
-    handleClose();
-  };
 
   const handleOpen = (index, userId) => {
     const newOpenDialogs = [...openDialogs];
@@ -99,13 +93,13 @@ const User = (data) => {
     setOpenDialogs(newOpenDialogs);
   };
 
-  const handleOpenAddUserDialog = () => {
-    setOpenAddUserDialog(true);
-  };
+  // const handleOpenAddUserDialog = () => {
+  //   setOpenAddUserDialog(true);
+  // };
 
-  const handleCloseAddUserDialog = () => {
-    setOpenAddUserDialog(false);
-  };
+  // const handleCloseAddUserDialog = () => {
+  //   setOpenAddUserDialog(false);
+  // };
 
   const containerStyles = {
     display: "flex",
@@ -155,7 +149,7 @@ const User = (data) => {
         <Icon>
           <PeopleIcon />
         </Icon>
-        <Button
+        {/* <Button
           sx={{
             color: "black",
             fontSize: "12px",
@@ -166,15 +160,15 @@ const User = (data) => {
           onClick={handleUser}
         >
           Users
-        </Button>
+        </Button> */}
       </Item>
       <Card className="App-Card">
         <h3>User directory</h3>
-        <div style={containerStyles}>
+        {/* <div style={containerStyles}>
           <Button variant="contained" onClick={handleOpenAddUserDialog}>
             Add User
           </Button>
-        </div>
+        </div> */}
         <TableContainer component={Paper} style={tableContainerStyles}>
           <Table style={tableStyles}>
             <TableHead>
@@ -258,7 +252,7 @@ const User = (data) => {
           </Table>
         </TableContainer>
 
-        <Dialog open={openAddUserDialog} onClose={handleCloseAddUserDialog}>
+        {/* <Dialog open={openAddUserDialog} onClose={handleCloseAddUserDialog}>
           <AddUser
             handleCloseDialog={handleCloseAddUserDialog}
             setSnackbarProps={{
@@ -267,7 +261,7 @@ const User = (data) => {
               setSeverity: setSnackbarSeverity,
             }}
           />
-        </Dialog>
+        </Dialog> */}
         <Snackbar
           anchorOrigin={{ vertical: "top", horizontal: "right" }}
           open={snackbarOpen}
