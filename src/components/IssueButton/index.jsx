@@ -17,8 +17,8 @@ const IssueButton = ({ item, updateBookCount }) => {
   const [data, setData] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isDialogOpen, setDialogOpen] = useState(false);
-  const { userId,setUserId } = useContext(UserContext);
-  
+ // const { userId,setUserId } = useContext(UserContext);
+ const userId=localStorage.getItem("userId");
 
   const handleCloseConfirmation = () => {
     setDialogOpen(false);

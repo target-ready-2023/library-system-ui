@@ -39,6 +39,19 @@ const TableComponent = ({ data, currentPage, updateData }) => {
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [bookCategories, setBookCategories] = useState({});
 
+  // Step 1: Add state to store sorted book data
+  const [sortedData, setSortedData] = useState([]);
+
+  useEffect(() => {
+    // Step 2: Sort the data by editing timestamp (replace with your criterion)
+    const sortedBooks = data?.slice().sort((a, b) => {
+      // Replace 'edited_timestamp' with the actual property containing editing timestamp
+      return new Date(a.edited_timestamp) - new Date(b.edited_timestamp);
+    });
+    setSortedData(sortedBooks);
+  }, [data]);
+
+  
   const handleOpen = (index) => {
     const newOpenDialogs = [...openDialogs];
     newOpenDialogs[index] = true;
@@ -51,10 +64,14 @@ const TableComponent = ({ data, currentPage, updateData }) => {
     setOpenDialogs(newOpenDialogs);
   };
 
-  const dataWithSerialNumber = data?.map((item, index) => ({
+  const dataWithSerialNumber = sortedData.map((item, index) => ({
     ...item,
     serialNumber: currentPage * 5 + (index + 1),
   }));
+//   const dataWithSerialNumber = sortedData.map((item, index) => ({
+//     ...item,
+//     serialNumber: index + 1, // Start from 1 for the latest edited book
+//   }));
 
   const showSnackbar = (message, severity) => {
     setSnackbarMessage(message);

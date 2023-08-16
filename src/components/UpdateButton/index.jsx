@@ -17,6 +17,7 @@ import axios from "axios";
 import { ClickAwayListener } from "@mui/material";
 
 const UpdateButton = ({ item, showSnackbar }) => {
+  
   const [isUpdateFormOpen, setIsUpdateFormOpen] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
   const [categoryNames, setCategoryNames] = useState([]);
@@ -26,7 +27,7 @@ const UpdateButton = ({ item, showSnackbar }) => {
   const [book, setBook] = useState({
     bookName: "",
     bookDescription: "",
-    publicationYear: 0,
+    publicationYear: 2023,
     authorName: "",
   });
 
@@ -98,7 +99,7 @@ const UpdateButton = ({ item, showSnackbar }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsUpdating(true);
-
+    
     const data = {
       book: {
         ...book,
@@ -114,11 +115,14 @@ const UpdateButton = ({ item, showSnackbar }) => {
       .put(updateApiUrl, data)
       .then((response) => {
         console.log("Book updated successfully.");
+        
         showSnackbar(
           `Book with Sl. No. ${item.serialNumber} updated successfully!`,
-          "success"
+          "success",10000
         );
+        
         handleCloseUpdateForm();
+        window.location.reload();
       })
       .catch((error) => {
         console.error("Error updating the book:", error.message);

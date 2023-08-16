@@ -46,7 +46,7 @@ function AddButton({ showSnackbar }) {
     setBook({
       bookName: "",
       bookDescription: "",
-      publicationYear: 0,
+      publicationYear: 2023,
       authorName: "",
     });
     setCategoryNames([]);
