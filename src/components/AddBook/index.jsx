@@ -1,27 +1,35 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Button,
+  Icon,
+  TextField,
+  Box,
+  FormLabel,
   Snackbar,
   Alert,
   Chip,
-  TextField,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  CircularProgress,
-  Typography,
+  Paper,
 } from "@mui/material";
-import { Edit } from "@mui/icons-material";
+import LocalLibraryIcon from "@mui/icons-material/LocalLibrary";
 import axios from "axios";
-import { ClickAwayListener } from "@mui/material";
+import { styled } from "@mui/material/styles";
 
-const UpdateButton = ({ item, showSnackbar }) => {
-  const [isUpdateFormOpen, setIsUpdateFormOpen] = useState(false);
-  const [selectedBook, setSelectedBook] = useState(null);
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: "white",
+  padding: theme.spacing(1),
+  textAlign: "center",
+  color: "black",
+}));
+
+function AddButton({ showSnackbar }) {
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [categoryNames, setCategoryNames] = useState([]);
   const [newCategory, setNewCategory] = useState("");
-  const [isUpdating, setIsUpdating] = useState(false);
+  const [numberOfCopies, setNumberOfCopies] = useState(0);
 
   const [book, setBook] = useState({
     bookName: "",
@@ -30,98 +38,43 @@ const UpdateButton = ({ item, showSnackbar }) => {
     authorName: "",
   });
 
-  const handleOpenUpdateForm = () => {
-    setSelectedBook(item);
+  const toggleDialog = () => {
+    setDialogOpen(!dialogOpen);
+  };
+
+  const resetForm = () => {
     setBook({
-      bookName: item.book_name,
-      bookDescription: item.book_description,
-      publicationYear: item.publication_year,
-      authorName: item.author_name,
+      bookName: "",
+      bookDescription: "",
+      publicationYear: 0,
+      authorName: "",
     });
-    fetchCategories(item.book_id);
-    setIsUpdateFormOpen(!isUpdateFormOpen);
-  };
-
-  const handleCloseUpdateForm = () => {
-    setIsUpdateFormOpen(false);
-  };
-
-  const handleCloseSnackbar = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-  };
-
-  const fetchCategories = async (bookId) => {
-    try {
-      const response = await axios.get(
-        `http://localhost:8081/library_system/v2/categories/${bookId}`
-      );
-      const categoryNamesArray = response.data.map(
-        (category) => category.category_name
-      );
-      setCategoryNames(categoryNamesArray);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-      showSnackbar("Error fetching book categories from server", "error");
-      setCategoryNames([]);
-    }
-  };
-
-  useEffect(() => {
-    if (selectedBook) {
-      fetchCategories(selectedBook.book_id);
-    }
-  }, [selectedBook]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setBook((prevBook) => ({
-      ...prevBook,
-      [name]: value,
-    }));
-  };
-
-  const handleCategoryChange = (e) => {
-    setNewCategory(e.target.value);
-  };
-
-  const addCategory = () => {
-    const lowercaseCategory = newCategory.trim().toLowerCase();
-    setCategoryNames((prevCategories) => [
-      ...prevCategories,
-      lowercaseCategory,
-    ]);
+    setCategoryNames([]);
     setNewCategory("");
+    setNumberOfCopies(0);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setIsUpdating(true);
-
     const data = {
       book: {
         ...book,
         publicationYear: parseInt(book.publicationYear),
-        book_id: selectedBook.book_id,
       },
-      categoryNames,
+      category_names: categoryNames,
+      no_of_copies: parseInt(numberOfCopies),
     };
 
-    const updateApiUrl = `http://localhost:8081/library_system/v1/inventory/book/update`;
-
     axios
-      .put(updateApiUrl, data)
+      .post("http://localhost:8081/library_system/v1/inventory/books", data)
       .then((response) => {
-        console.log("Book updated successfully.");
-        showSnackbar(
-          `Book with Sl. No. ${item.serialNumber} updated successfully!`,
-          "success"
-        );
-        handleCloseUpdateForm();
+        console.log("Response from the server:", response.data);
+        setDialogOpen(false);
+        resetForm();
+        showSnackbar("Book added successfully!", "success");
       })
       .catch((error) => {
-        console.error("Error updating the book:", error.message);
+        console.error("Error posting data:", error);
         if (error.response && error.response.status === 409) {
           const errorData = error.response.data;
           const errorMessage = errorData.message;
@@ -134,57 +87,71 @@ const UpdateButton = ({ item, showSnackbar }) => {
           showSnackbar(formattedErrorMessages, "error");
         } else {
           showSnackbar("Error submitting form", "error");
+          resetForm();
         }
-      })
-      .finally(() => {
-        setIsUpdating(false);
       });
   };
 
-  return (
-    <div>
-      {isUpdating && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            background: "rgba(0, 0, 0, 0.5)",
-            zIndex: 9999,
-          }}
-        >
-          <Typography variant="body1" style={{ marginTop: "10px" }}>
-            Updating...
-          </Typography>
-          <CircularProgress
-            color="primary"
-            style={{
-              position: "absolute",
-              top: 230,
-              left: "48%",
-            }}
-          />
-        </div>
-      )}
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setBook((prevBook) => ({ ...prevBook, [name]: value }));
+  };
 
-      <Button className="update-button" onClick={handleOpenUpdateForm}>
-        <Edit style={{ fontSize: 25, padding: 1 }} />
-      </Button>
+  const handleCategoryChange = (e) => {
+    setNewCategory(e.target.value);
+  };
+
+  const handleNumberOfCopiesChange = (e) => {
+    setNumberOfCopies(e.target.value);
+    console.log("num " + numberOfCopies);
+  };
+  const addCategory = () => {
+    if (newCategory.trim()) {
+      const lowerCaseCategory = newCategory.toLowerCase(); // Convert to lowercase
+      if (!categoryNames.includes(lowerCaseCategory)) {
+        setCategoryNames((prevCategories) => [
+          ...prevCategories,
+          lowerCaseCategory,
+        ]);
+        setNewCategory("");
+      }
+    }
+  };
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+  };
+
+  return (
+    <>
+      <Item>
+        <Icon>
+          <LocalLibraryIcon />
+        </Icon>
+        <Button
+          sx={{
+            color: "black",
+            fontSize: "12px",
+            height: "30px",
+            width: "70%",
+            fontFamily: "Arial",
+          }}
+          onClick={toggleDialog}
+        >
+          Add Book
+        </Button>
+      </Item>
       <Dialog
-        open={isUpdateFormOpen}
-        onClose={() => setIsUpdateFormOpen(false)}
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
         maxWidth="md"
-        scroll="paper"
         fullWidth
         classes={{ paper: "dialogContainer" }}
       >
         <DialogTitle sx={{ fontWeight: "bold", fontFamily: "Arial" }}>
-          UPDATE BOOK DETAILS
+          NEW BOOK DETAILS
         </DialogTitle>
         <DialogContent>
           <TextField
@@ -224,6 +191,15 @@ const UpdateButton = ({ item, showSnackbar }) => {
             style={{ marginBottom: "10px" }}
           />
 
+          <TextField
+            name="numberOfCopies"
+            label="Number Of copies of the book "
+            value={numberOfCopies}
+            onChange={handleNumberOfCopiesChange}
+            fullWidth
+            required
+            style={{ marginBottom: "10px" }}
+          />
           <TextField
             label="Categories"
             value={newCategory}
@@ -265,7 +241,10 @@ const UpdateButton = ({ item, showSnackbar }) => {
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={handleCloseUpdateForm}
+            onClick={() => {
+              setDialogOpen(false);
+              resetForm();
+            }}
             style={{ backgroundColor: "#6c88c8" }}
             variant="contained"
             color="primary"
@@ -278,12 +257,12 @@ const UpdateButton = ({ item, showSnackbar }) => {
             style={{ marginRight: "33px", backgroundColor: "#6c88c8" }}
             onClick={handleSubmit}
           >
-            Update
+            Submit
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </>
   );
-};
+}
 
-export default UpdateButton;
+export default AddButton;
