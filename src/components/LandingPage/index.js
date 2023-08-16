@@ -32,6 +32,8 @@ export const LandingPage = () => {
   const navigate = useNavigate();
 
   const [selectedOption, setSelectedOption] = useState("");
+  const [selectedUserName,setSelectedUserName] = useState("");
+  // const [userName,setUserName] = useState("");
   const [data, setData] = useState([]);
   const { userId,setUserId } = useContext(UserContext);
   const [openAddUserDialog, setOpenAddUserDialog] = useState(false);
@@ -39,7 +41,7 @@ export const LandingPage = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   localStorage.setItem("userId", selectedOption);
-  
+  localStorage.setItem("userName", selectedUserName);
   const handleOpenAddUserDialog = () => {
     setOpenAddUserDialog(true);
   };
@@ -59,17 +61,19 @@ export const LandingPage = () => {
     fetchData();
   }, []);
   const handleOptionChange = (event) => {
-    
-    setSelectedOption(event.target.value);
-   
+    const combinedValue = event.target.value;
+    const [selectedOptionValue, selectedUserNameValue] = combinedValue.split('-');
+  
+    setSelectedOption(selectedOptionValue);
+    setSelectedUserName(selectedUserNameValue);
   };
   console.log("selected option " + selectedOption);
+  console.log("userName " + selectedUserName);
 
   const handleNavigation = () => {
-
     console.log(selectedOption);
     setUserId(selectedOption);
-    
+    // setUserName(selectedUserName); 
     navigate("/home");
   };
 
@@ -100,11 +104,12 @@ export const LandingPage = () => {
               onChange={handleOptionChange}
               style={useStyles.select}
             >
-              {data.map((user) => (
-                <MenuItem key={user.user_id} value={user.user_id}>
-                  {user.user_name}
-                </MenuItem>
-              ))}
+            {data.map((user) => (
+              <MenuItem key={user.user_id} value={`${user.user_id}-${user.user_name}`}>
+                {user.user_name}
+              </MenuItem>
+            ))}
+
             </Select>
           </FormControl>
 
