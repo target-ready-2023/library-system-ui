@@ -2,6 +2,7 @@ import React, { useState, useContext, createContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import UserContext from '../UserContext';
+import AddUser from "../AddUser";
 import {
   Button,
   FormControl,
@@ -9,9 +10,10 @@ import {
   MenuItem,
   Select,
   Card,
-  TextField,
+  Alert,
+  Dialog,
+  Snackbar,
 } from "@mui/material";
-// export const UserIdContext = createContext();
 const useStyles = {
   formControl: {
     margin: 16,
@@ -32,6 +34,19 @@ export const LandingPage = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const [data, setData] = useState([]);
   const { userId,setUserId } = useContext(UserContext);
+  const [openAddUserDialog, setOpenAddUserDialog] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  localStorage.setItem("userId", selectedOption);
+  
+  const handleOpenAddUserDialog = () => {
+    setOpenAddUserDialog(true);
+  };
+  
+  const handleCloseAddUserDialog = () => {
+    setOpenAddUserDialog(false);
+  };
 
   const fetchData = async () => {
     const response = await axios.get(
@@ -103,6 +118,39 @@ export const LandingPage = () => {
           >
             proceed
           </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            style={{ margin: "20px" }}
+            className={useStyles.button}
+            onClick={handleOpenAddUserDialog}
+            
+          >
+            Add User
+          </Button>
+          <Dialog open={openAddUserDialog} onClose={handleCloseAddUserDialog}>
+            <AddUser handleCloseDialog={handleCloseAddUserDialog}
+            setSnackbarProps={{
+              setOpen: setSnackbarOpen,
+              setMessage: setSnackbarMessage,
+              setSeverity: setSnackbarSeverity,
+            }} />
+          </Dialog>
+          <Snackbar
+            anchorOrigin={{ vertical: "top", horizontal: "right" }}
+            open={snackbarOpen}
+            autoHideDuration={8000}
+            onClose={() => setSnackbarOpen(false)}
+          >
+            <Alert
+              onClose={() => setSnackbarOpen(false)}
+              severity={snackbarSeverity}
+              sx={{ width: "100%" }}
+            >
+              {snackbarMessage}
+            </Alert>
+          </Snackbar>
+
         </Card>
       </div>
     

@@ -3,12 +3,22 @@ import { styled } from "@mui/material/styles";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
-import { Button, Icon, Snackbar, Alert } from "@mui/material";
+import {
+  Button,
+  Icon,
+  Drawer,
+  TextField,
+  Snackbar,
+  Alert,
+  Chip,
+} from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
+import { FormLabel } from "@mui/material";
+import LocalLibraryIcon from "@mui/icons-material/LocalLibrary";
 import CategoryIcon from "@mui/icons-material/Category";
 import { useNavigate } from "react-router-dom";
 import AddButton from "../AddBook";
-
+import axios from "axios";
 import "./Layout.css";
 import User from "../User";
 
@@ -29,7 +39,12 @@ export default function RowAndColumnSpacing() {
   const handleCategory = () => {
     navigate("/category");
   };
-
+  const handleUser = () => {
+    navigate('/user');
+  }
+  const userId=localStorage.getItem("userId");
+  console.log("layout "+userId);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
@@ -67,15 +82,41 @@ export default function RowAndColumnSpacing() {
                   fontFamily: "Arial",
                 }}
                 onClick={handleHome}
+                disabled={!userId}
               >
                 Books Directory
               </Button>
             </Item>
           </div>
         </Grid>
+        
         <Grid item xs={12} p={1}>
-          <AddButton showSnackbar={showSnackbar} />
+          <div>
+            <Item>
+              <Icon>
+                <HomeIcon />
+              </Icon>
+              <Button
+                sx={{
+                  color: "black",
+                  fontSize: "12px",
+                  height: "30px",
+                  width: "70%",
+                  fontFamily: "Arial",
+                }}
+                onClick={handleUser}
+                disabled={!userId}
+              >
+                User Directory
+              </Button>
+            </Item>
+          </div>
         </Grid>
+
+        <Grid item xs={12} p={1}>
+        <AddButton showSnackbar={showSnackbar} />
+        </Grid>
+        
         <Grid item xs={12} p={1}>
           <Item>
             <Icon>
@@ -90,14 +131,15 @@ export default function RowAndColumnSpacing() {
                 fontFamily: "Arial",
               }}
               onClick={handleCategory}
+              disabled={!userId}
             >
               Books by category
             </Button>
           </Item>
         </Grid>
-        <Grid item xs={12} p={1}>
+        {/* <Grid item xs={12} p={1}>
           <User />
-          {/* <div>
+          <div>
             <Item>
               <Icon>
                 <PeopleIcon />
@@ -115,8 +157,8 @@ export default function RowAndColumnSpacing() {
                 Users
               </Button>
             </Item>
-          </div> */}
-        </Grid>
+          </div>
+        </Grid> */}
       </Grid>
       <div className="display"></div>
       <Snackbar
