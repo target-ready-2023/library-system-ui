@@ -36,101 +36,56 @@ const ReturnButton = ({ item, updateBookCount }) => {
     };
    
 
-    fetch(returnApiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body:JSON.stringify(returnData),
-    })
-      .then((response) => {
-        if(!response.ok){
-               console.log(response);
-            
-          throw new Error(data.message);
-          
-        }
-         console.log(response);
-       
-        setSnackbarMessage(`Book Returned successfully by ${userName}!`);
-        console.log(response.data);
-        setSnackbarSeverity("success");
-        setOpenSnackbar(true);
-        setData((prevData) =>
-          prevData.filter((book) => book.book_id !== book_id)
-        );
-        setDrawerOpen(false);
-        updateBookCount(book_id);
-      })
-      .catch((error) => {
-       console.log("error "+error);
-        if (error.response && error.response.status === 404) {
-          console.log("message "+error.response.data.message);
-          const errorData = error.response.data;
-          const errorMessage = errorData.message; // Assuming the error message is the response body
-          setSnackbarMessage(errorMessage);
+  fetch(returnApiUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(returnData),  
+  })
+  .then(async (response) => {
+    const responseData = await response.json();
+    console.log("response data "+responseData);
+    if (!response.ok) {
+        throw new Error(responseData.message);
+    }
+
+    return responseData;
+})
+.then((responseData) => {
+    
+    console.log("Book Returned successfully:", responseData);
+    setSnackbarMessage(`Book returned successfully by ${userName}!`);
+    console.log(responseData);
+    setSnackbarSeverity("success");
+    setOpenSnackbar(true);
+    setData((prevData) =>
+      prevData.filter((book) => book.book_id !== book_id)
+    );
+    setDrawerOpen(false);
+    updateBookCount(book_id);
+})
+   
+    .catch((error) => {
+      if (error.message) {
+          console.log("Error message:", error.message);
+          setSnackbarMessage(error.message);
           setSnackbarSeverity("error");
           setOpenSnackbar(true);
-          //resetForm();
-          
-        }
-        else{
-          console.error(`Error Returning the book by ${userName}:`, error.message);
-          setSnackbarMessage("User hasn't issued this book");
+      } else {
+          console.error("An unknown error occurred:", error);
+          setSnackbarMessage(error);
           setSnackbarSeverity("error");
           setOpenSnackbar(true);
-        }
-      });
-      // fetch(returnApiUrl, {
-      //   method: "POST",
-      //   headers: {
-      //       "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(returnData),
-      // })
-      // .then(async (response) => {
-      //     const responseData = await response.json();
-      //     console.log("response data "+responseData);
-      //     if (!response.ok) {
-      //         throw new Error(responseData.message);
-      //     }
-
-      //     return responseData;
-      // })
-      // .then((responseData) => {
-      //     // Handle success here
-      //     console.log("Book returned successfully:", responseData);
-      //     setSnackbarMessage(`Book Returned successfully by ${userName}!`);
-      //     console.log(responseData);
-      //     setSnackbarSeverity("success");
-      //     setOpenSnackbar(true);
-      //     setData((prevData) =>
-      //       prevData.filter((book) => book.book_id !== book_id)
-      //     );
-      //     setDrawerOpen(false);
-      //     updateBookCount(book_id);
-      // })
-      // .catch((error) => {
-      //     if (error.message) {
-      //         console.log("Error message:", error.message);
-      //         setSnackbarMessage(error.message);
-      //         setSnackbarSeverity("error");
-      //         setOpenSnackbar(true);
-      //     } else {
-      //         console.error("An unknown error occurred:", error);
-      //         setSnackbarMessage(error);
-      //         setSnackbarSeverity("error");
-      //         setOpenSnackbar(true);
-      //     }
-      // });
-
+      }
+  });
        setDialogOpen(false);
    };
 
   const handleReturn = () => {
     if (!item) {
       console.error("No book selected for Return.");
-      // Handle error or show snackbar
+      
       return;
     }
     setDialogOpen(true);
@@ -180,5 +135,4 @@ const ReturnButton = ({ item, updateBookCount }) => {
   );
 };
 
-export default ReturnButton;
-
+export default ReturnButton;

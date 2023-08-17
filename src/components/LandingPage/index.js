@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import UserContext from '../UserContext';
 import AddUser from "../AddUser";
+
 import {
   Button,
   FormControl,
@@ -19,13 +20,26 @@ const useStyles = {
     margin: 16,
     minWidth: 120,
     maxWidth: 1500,
-    width: "30%",
+    width: "80%",
   },
   select: {
     height: "100%",
   },
   button: {
     margin: 16,
+  },
+  blurBackground: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0.5, 0.5, 0.5)", 
+    backdropFilter: "blur(2px)", 
+    zIndex: 1,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
 };
 export const LandingPage = () => {
@@ -59,7 +73,7 @@ export const LandingPage = () => {
 
   const fetchData = async () => {
     axios
-      .get(`http://localhost:8081/library_system/v3/users`)
+      .get(`http://localhost:8081/library_system/v3/AllUsers`)
       .then((response) => {
         console.log("Response from the server:", response.data);
         setData(response.data);
@@ -96,7 +110,8 @@ export const LandingPage = () => {
   };
 
   return (
-    
+   //  <div style={useStyles.blurBackground}>
+
       <div
         style={{
           display: "flex",
@@ -175,6 +190,6 @@ export const LandingPage = () => {
 
         </Card>
       </div>
-    
+   // </div>
   );
 };

@@ -38,82 +38,43 @@ const IssueButton = ({ item, updateBookCount }) => {
       },
       body: JSON.stringify(issueData),  
     })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        console.log(response);
-        console.log(response.data);
-        console.log("Book Issued successfully.");
-        setSnackbarMessage(`Book Issued successfully for ${userName}.`);
-        setSnackbarSeverity("success");
-        setOpenSnackbar(true);
-        setData((prevData) =>
-          prevData.filter((book) => book.book_id !== book_id)
-        );
-        setDrawerOpen(false);
-        updateBookCount(book_id);
-      })
-      .catch((error) => {
-        if (error.response && error.response.status === 409) {
-          const errorData = error.response.data;
-          const errorMessage = errorData.message; // Assuming the error message is the response body
-          setSnackbarMessage(errorMessage);
-          setSnackbarSeverity("error");
-          setOpenSnackbar(true);
-          // resetForm();
-          
-        }
-        else{
-        console.error(`Error Issuing the book for user ${userId}:`, error.message);
-        setSnackbarMessage(`Book already issued for ${userName}:`);
-        setSnackbarSeverity("error");
-        setOpenSnackbar(true);}
-      });
-      // fetch(issueApiUrl, {
-      //   method: "POST",
-      //   headers: {
-      //       "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(issueData),
-      // })
-      // .then(async (response) => {
-      //     const responseData = await response.json();
-      //     console.log("response data "+responseData);
-      //     if (!response.ok) {
-      //         throw new Error(responseData.message);
-      //     }
+    .then(async (response) => {
+      const responseData = await response.json();
+      console.log("response data "+responseData);
+      if (!response.ok) {
+          throw new Error(responseData.message);
+      }
 
-      //     return responseData;
-      // })
-      // .then((responseData) => {
-      //     // Handle success here
-      //     console.log(responseData);
-        
-      //   console.log("Book Issued successfully.");
-      //   setSnackbarMessage(`Book Issued successfully for ${userName}.`);
-      //   setSnackbarSeverity("success");
-      //   setOpenSnackbar(true);
-      //   setData((prevData) =>
-      //     prevData.filter((book) => book.book_id !== book_id)
-      //   );
-      //   setDrawerOpen(false);
-      //   updateBookCount(book_id);
-      // })
-      // .catch((error) => {
-      //     if (error.message) {
-      //         console.log("Error message:", error.message);
-      //         setSnackbarMessage(error.message);
-      //         setSnackbarSeverity("error");
-      //         setOpenSnackbar(true);
-             
-      //     } else {
-      //         console.error("An unknown error occurred:", error);
-      //         setSnackbarMessage(error);
-      //         setSnackbarSeverity("error");
-      //         setOpenSnackbar(true);
-      //     }
-      // });
+      return responseData;
+  })
+  .then((responseData) => {
+      // Handle success here
+      console.log("Book Issued successfully:", responseData);
+      setSnackbarMessage(`Book Issued successfully to ${userName}!`);
+      // setSnackbarMessage(`Book Returned successfully by ${userName}!`);
+      console.log(responseData);
+      setSnackbarSeverity("success");
+      setOpenSnackbar(true);
+      setData((prevData) =>
+        prevData.filter((book) => book.book_id !== book_id)
+      );
+      setDrawerOpen(false);
+      updateBookCount(book_id);
+  })
+     
+      .catch((error) => {
+        if (error.message) {
+            console.log("Error message:", error.message);
+            setSnackbarMessage(error.message);
+            setSnackbarSeverity("error");
+            setOpenSnackbar(true);
+        } else {
+            console.error("An unknown error occurred:", error);
+            setSnackbarMessage(error);
+            setSnackbarSeverity("error");
+            setOpenSnackbar(true);
+        }
+    });
       setDialogOpen(false);
   };
 
@@ -172,7 +133,4 @@ const IssueButton = ({ item, updateBookCount }) => {
 };
 
 export default IssueButton;
-
-
-
 

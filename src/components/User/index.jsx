@@ -25,6 +25,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import { styled } from "@mui/material/styles";
+import { useLocation ,useNavigate} from "react-router-dom";
 
 const User = (data) => {
   const [users, setUsers] = useState([]);
@@ -33,10 +34,29 @@ const User = (data) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [currentPage, setCurrentPage] = useState(0);
+  const [userCount, setUserCount] = useState(0);
+  const recordsPerPage = 5;
+  const nPage = Math.ceil(userCount/ recordsPerPage);
+
+  localStorage.setItem("limit",userCount);
+
+  const location = useLocation();
+  const navigate=useNavigate();
   const [openDialogs, setOpenDialogs] = useState(
     Array(data?.length).fill(false)
   );
   
+  const changePage = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    console.log("page "+currentPage);
+ };
+
+ const dataWithSerialNumber = users?.map((user, index) => ({
+  ...user,
+  serialNumber: currentPage*5 + (index+1),
+}));
+
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: "white",
     padding: theme.spacing(1),
@@ -44,21 +64,30 @@ const User = (data) => {
     color: "black",
   }));
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
   const fetchUsers = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:8081/library_system/v3/users`
+        const response = await axios.get(
+          `http://localhost:8081/library_system/v3/users?page_number=${currentPage}`
+        );
+  
+        setUsers(response.data);
+        console.log(response.data);
+      const responseUser = await axios.get(
+        `http://localhost:8081/library_system/v3/users/total_count`
       );
-
-      setUsers(response.data);
+      setUserCount(responseUser.data);
+        
     } catch (error) {
-      console.error("Error fetching users:", error);
+      console.error(error);
+      navigate("/notfound")
     }
+    
   };
+
+  useEffect(() => {
+    fetchUsers();
+  }, [currentPage,location]);
+
 
   const fetchBooksByUserId = async (user_id) => {
     try {
@@ -197,9 +226,10 @@ const User = (data) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {users.map((user, index) => (
+              
+              {dataWithSerialNumber.map((user, index) => (
                 <TableRow key={user.user_id}>
-                  <TableCell align="center">{index + 1}</TableCell>
+                  <TableCell align="center">{user.serialNumber}</TableCell>
                   <TableCell align="center">{user.user_name}</TableCell>
                   <TableCell align="center">{user.user_role}</TableCell>
                   <TableCell align="center" style={tdStyles}>
@@ -248,6 +278,7 @@ const User = (data) => {
                   </TableCell>
                 </TableRow>
               ))}
+             
             </TableBody>
           </Table>
         </TableContainer>
@@ -276,6 +307,42 @@ const User = (data) => {
             {snackbarMessage}
           </Alert>
         </Snackbar>
+        <ul className="pagination">
+        <li className="page-item">
+          <a
+            href="#"
+            className="page-link"
+            onClick={() => {
+              if (currentPage > 0) changePage(currentPage - 1);
+            }}
+          >
+            previous
+          </a>
+        </li>
+        
+          <li className={`page-item `}>
+            <a
+              href="#"
+              className="page-link"
+              onClick={() => changePage(currentPage)}
+            >
+              {currentPage + 1}
+            </a>
+          </li>
+        
+        <li className="page-item">
+          <a
+            href="#"
+            className="page-link"
+            onClick={() => {
+              if (currentPage < nPage-1) changePage(currentPage + 1);
+            }}
+          >
+            Next
+          </a>
+        </li>
+      </ul>
+
       </Card>
     </>
   );
