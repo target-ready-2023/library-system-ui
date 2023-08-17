@@ -22,7 +22,7 @@ const DeleteButton = ({ item, updateData}) => {
   };
 
   const deleteBook = (book_id) => {
-    const deleteApiUrl = `http://localhost:8081/library_system/v1/book/${book_id}`;
+    const deleteApiUrl = `http://localhost:8081/library_system/v1/books/${book_id}`;
 
     fetch(deleteApiUrl, {
       method: "DELETE",

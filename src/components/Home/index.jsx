@@ -68,7 +68,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchData();
-  },[prop1,currentPage,categoryPage]);
+  },[prop1,currentPage,categoryPage,location]);
 
   const handleCloseSnackbar = (event, reason) => {
     if (reason === "clickaway") {
