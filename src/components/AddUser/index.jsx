@@ -11,12 +11,13 @@ import {
   MenuItem,
   InputLabel,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const AddUser = ({ handleCloseDialog, setSnackbarProps }) => {
   const [userId, setUserId] = useState("");
   const [userName, setUserName] = useState("");
   const [userRole, setUserRole] = useState("");
-
+  const navigate=useNavigate();
   const handleAddUser = async () => {
     if (!userId || !userName || !userRole) {
  // Check if any required field is empty
@@ -35,10 +36,8 @@ const AddUser = ({ handleCloseDialog, setSnackbarProps }) => {
         }
       );
 
-      // Assuming the response includes the newly added user data
       const newUser = response.data;
 
-      // Close the dialog and pass the new user data to the parent component
       handleCloseDialog(newUser);
       setSnackbarProps.setOpen(true);
       setSnackbarProps.setMessage("User added successfully!");
@@ -48,12 +47,13 @@ const AddUser = ({ handleCloseDialog, setSnackbarProps }) => {
       if (error.response && error.response.status === 409) {
         const errorMessage = error.response.data.message;
         setSnackbarProps.setOpen(true);
-      setSnackbarProps.setMessage(errorMessage); // Use the error message from the response
+      setSnackbarProps.setMessage(errorMessage); 
       setSnackbarProps.setSeverity("error");
       } else {
         console.error("Error adding user:", error);
       }
     }
+    navigate("/");
   };
 
   return (

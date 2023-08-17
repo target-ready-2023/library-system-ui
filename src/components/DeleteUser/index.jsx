@@ -6,17 +6,17 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-
+import { useNavigate,useLocation} from "react-router-dom";
 const DeleteUser = ({ user}) => {
     
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-
+  
   const [data, setData] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isDialogOpen, setDialogOpen] = useState(false);
-
+  const navigate= useNavigate();
   const handleCloseConfirmation = () => {
     setDialogOpen(false);
   };
@@ -58,6 +58,7 @@ const DeleteUser = ({ user}) => {
         setOpenSnackbar(true);
       });
       handleCloseConfirmation();
+      navigate("/user");
   };
 
   const handleDelete = () => {
