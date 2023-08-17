@@ -50,12 +50,31 @@ export const LandingPage = () => {
     setOpenAddUserDialog(false);
   };
 
+  // const fetchData = async () => {
+  //   const response = await axios.get(
+  //     `http://localhost:8081/library_system/v3/users`
+  //   );
+  //   setData(response.data);
+  // };
+
   const fetchData = async () => {
-    const response = await axios.get(
-      `http://localhost:8081/library_system/v3/users`
-    );
-    setData(response.data);
-  };
+    axios
+      .get(`http://localhost:8081/library_system/v3/users`)
+      .then((response) => {
+        console.log("Response from the server:", response.data);
+        setData(response.data);
+      })
+      .catch((error) => {
+        console.error("Error posting data:", error);
+        if (error.response && error.response.status === 404) {
+          const errorData = error.response.data;
+          const errorMessage = errorData.message;
+          setSnackbarOpen(true);
+          setSnackbarMessage(errorMessage);
+          setSnackbarSeverity("error");
+        }
+      });
+  };
 
   useEffect(() => {
     fetchData();
@@ -63,7 +82,6 @@ export const LandingPage = () => {
   const handleOptionChange = (event) => {
     const combinedValue = event.target.value;
     const [selectedOptionValue, selectedUserNameValue] = combinedValue.split('-');
-  
     setSelectedOption(selectedOptionValue);
     setSelectedUserName(selectedUserNameValue);
   };
@@ -78,7 +96,6 @@ export const LandingPage = () => {
   };
 
   return (
-    
     
       <div
         style={{
@@ -100,8 +117,8 @@ export const LandingPage = () => {
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              value={selectedOption}
               onChange={handleOptionChange}
+              value={selectedUserName}
               style={useStyles.select}
             >
             {data.map((user) => (

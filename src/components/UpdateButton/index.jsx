@@ -12,6 +12,7 @@ import {
   CircularProgress,
   Typography,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { Edit } from "@mui/icons-material";
 import axios from "axios";
 import { ClickAwayListener } from "@mui/material";
@@ -23,7 +24,7 @@ const UpdateButton = ({ item, showSnackbar }) => {
   const [categoryNames, setCategoryNames] = useState([]);
   const [newCategory, setNewCategory] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
-
+  const navigate=useNavigate();
   const [book, setBook] = useState({
     bookName: "",
     bookDescription: "",
@@ -118,11 +119,12 @@ const UpdateButton = ({ item, showSnackbar }) => {
         
         showSnackbar(
           `Book with Sl. No. ${item.serialNumber} updated successfully!`,
-          "success",10000
+          "success",20000
         );
         
         handleCloseUpdateForm();
-        window.location.reload();
+        // window.location.reload();
+        navigate("/home");
       })
       .catch((error) => {
         console.error("Error updating the book:", error.message);
@@ -143,6 +145,7 @@ const UpdateButton = ({ item, showSnackbar }) => {
       .finally(() => {
         setIsUpdating(false);
       });
+      
   };
 
   return (

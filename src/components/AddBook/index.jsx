@@ -14,6 +14,7 @@ import {
   DialogActions,
   Paper,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import LocalLibraryIcon from "@mui/icons-material/LocalLibrary";
 import axios from "axios";
 import { styled } from "@mui/material/styles";
@@ -30,6 +31,7 @@ function AddButton({ showSnackbar }) {
   const [categoryNames, setCategoryNames] = useState([]);
   const [newCategory, setNewCategory] = useState("");
   const [numberOfCopies, setNumberOfCopies] = useState(0);
+  const navigate=useNavigate();
   const userId=localStorage.getItem("userId");
   const [book, setBook] = useState({
     bookName: "",
@@ -72,6 +74,7 @@ function AddButton({ showSnackbar }) {
         setDialogOpen(false);
         resetForm();
         showSnackbar("Book added successfully!", "success");
+        navigate("/home");
       })
       .catch((error) => {
         console.error("Error posting data:", error);
@@ -90,6 +93,7 @@ function AddButton({ showSnackbar }) {
           resetForm();
         }
       });
+      
   };
 
   const handleChange = (e) => {

@@ -66,10 +66,54 @@ const IssueButton = ({ item, updateBookCount }) => {
         }
         else{
         console.error(`Error Issuing the book for user ${userId}:`, error.message);
-        setSnackbarMessage(`Error Issuing the book for user ${userName}:`);
+        setSnackbarMessage(`Book already issued for ${userName}:`);
         setSnackbarSeverity("error");
         setOpenSnackbar(true);}
       });
+      // fetch(issueApiUrl, {
+      //   method: "POST",
+      //   headers: {
+      //       "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(issueData),
+      // })
+      // .then(async (response) => {
+      //     const responseData = await response.json();
+      //     console.log("response data "+responseData);
+      //     if (!response.ok) {
+      //         throw new Error(responseData.message);
+      //     }
+
+      //     return responseData;
+      // })
+      // .then((responseData) => {
+      //     // Handle success here
+      //     console.log(responseData);
+        
+      //   console.log("Book Issued successfully.");
+      //   setSnackbarMessage(`Book Issued successfully for ${userName}.`);
+      //   setSnackbarSeverity("success");
+      //   setOpenSnackbar(true);
+      //   setData((prevData) =>
+      //     prevData.filter((book) => book.book_id !== book_id)
+      //   );
+      //   setDrawerOpen(false);
+      //   updateBookCount(book_id);
+      // })
+      // .catch((error) => {
+      //     if (error.message) {
+      //         console.log("Error message:", error.message);
+      //         setSnackbarMessage(error.message);
+      //         setSnackbarSeverity("error");
+      //         setOpenSnackbar(true);
+             
+      //     } else {
+      //         console.error("An unknown error occurred:", error);
+      //         setSnackbarMessage(error);
+      //         setSnackbarSeverity("error");
+      //         setOpenSnackbar(true);
+      //     }
+      // });
       setDialogOpen(false);
   };
 
