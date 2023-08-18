@@ -30,13 +30,13 @@ function AddButton({ showSnackbar }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [categoryNames, setCategoryNames] = useState([]);
   const [newCategory, setNewCategory] = useState("");
-  const [numberOfCopies, setNumberOfCopies] = useState(0);
-  const navigate=useNavigate();
-  const userId=localStorage.getItem("userId");
+  const [numberOfCopies, setNumberOfCopies] = useState(1);
+  const navigate = useNavigate();
+  const userId = localStorage.getItem("userId");
   const [book, setBook] = useState({
     bookName: "",
     bookDescription: "",
-    publicationYear: 0,
+    publicationYear: 2023,
     authorName: "",
   });
 
@@ -53,7 +53,7 @@ function AddButton({ showSnackbar }) {
     });
     setCategoryNames([]);
     setNewCategory("");
-    setNumberOfCopies(0);
+    setNumberOfCopies(1);
   };
 
   const handleSubmit = (e) => {
@@ -93,7 +93,6 @@ function AddButton({ showSnackbar }) {
           resetForm();
         }
       });
-      
   };
 
   const handleChange = (e) => {
@@ -250,7 +249,7 @@ function AddButton({ showSnackbar }) {
               setDialogOpen(false);
               resetForm();
             }}
-            style={{ backgroundColor: "#6c88c8" }}
+            style={{ backgroundColor: "grey" }}
             variant="contained"
             color="primary"
           >

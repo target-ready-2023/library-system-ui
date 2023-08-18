@@ -15,37 +15,34 @@ const Home = () => {
   const prop1 = location.state?.prop1 || false;
   const prop2 = location.state?.prop2 || "";
   const [currentPage, setCurrentPage] = useState(0);
-  const [categoryPage,setCategoryPage] = useState(0);
+  const [categoryPage, setCategoryPage] = useState(0);
   const [totalBooks, setTotalBooks] = useState(0);
-  const [categoryBooks,setCategoryBooks] = useState(0);
+  const [categoryBooks, setCategoryBooks] = useState(0);
   const recordsPerPage = 5;
-  const no_of_Pages=Math.ceil(totalBooks/recordsPerPage);
-  const pages=Math.ceil(categoryBooks/recordsPerPage);
-  const navigate=useNavigate();
+  const no_of_Pages = Math.ceil(totalBooks / recordsPerPage);
+  const pages = Math.ceil(categoryBooks / recordsPerPage);
+  const navigate = useNavigate();
   const fetchData = async () => {
-    
     try {
       if (prop1) {
-        try{
+        try {
           const response = await axios.get(
             `http://localhost:8081/library_system/v1/book/category/${prop2}?page_number=${categoryPage}`
           );
           setData(response.data);
-            console.log(response.data);
+          console.log(response.data);
           const responseCategory = await axios.get(
             `http://localhost:8081/library_system/v1/books/category/total_count/${prop2}`
           );
           setCategoryBooks(responseCategory.data);
-        }catch(error){
-          navigate("/notfound")
+        } catch (error) {
+          navigate("/notfound");
         }
-        
-
       } else {
         const response = await axios.get(
           `http://localhost:8081/library_system/v1/books_directory?page_number=${currentPage}`
         );
-        setData(response.data);       
+        setData(response.data);
       }
       const response = await axios.get(
         "http://localhost:8081/library_system/v1/books_directory/total_count"
@@ -54,21 +51,18 @@ const Home = () => {
     } catch (error) {
       console.error(error);
     }
-    
   };
   const changePage = (page_number) => {
-  
-    if(prop1){
+    if (prop1) {
       setCategoryPage(page_number);
-    } 
-    else{
+    } else {
       setCurrentPage(page_number);
-    }    
+    }
   };
 
   useEffect(() => {
     fetchData();
-  },[prop1,currentPage,categoryPage,location]);
+  }, [prop1, currentPage, categoryPage, location]);
 
   const handleCloseSnackbar = (event, reason) => {
     if (reason === "clickaway") {
@@ -80,75 +74,71 @@ const Home = () => {
   return (
     <div sx={{ paddingTop: "70px", fontFamily: "TimesNewRoman" }}>
       <Card className="App-Card">
-        <h3>Books Directory</h3>
+        <h3 sx={{ fontWeight: "bold", fontFamily: "Arial" }}>
+          BOOKS DIRECTORY
+        </h3>
         <div>
-          <TableComponent 
-          data={data} 
-          currentPage={currentPage} 
-          updateData={() => {
+          <TableComponent
+            data={data}
+            currentPage={currentPage}
+            updateData={() => {
               fetchData();
             }}
           />
 
           <div>
-          <ul className="pagination" id="pagination">
-                <li className="page-item">
-                  <a
-                    href="#"
-                    className="page-link"
-                    onClick={(event) => {
-                      event.preventDefault();
-                      if(prop1 && categoryPage>0){
-                        changePage(categoryPage - 1);
-                      } 
-                      else if (currentPage > 0){
-                        changePage(currentPage - 1);
-                      } 
-                    }}
-                  >
-                    Previous
-                  </a>
-                </li>
-                <li  className={`page-item `} >
-                   <a
-                    href="#"
-                    className="page-link"
-                    onClick={(event) => {
-                      event.preventDefault();
-                      if(prop1){
-                        changePage(categoryPage);
-                      } 
-                      else {
-                        
-                        changePage(currentPage);
-                      }
-                    } }
-                    >
-                    {prop1 ? categoryPage + 1 : currentPage + 1}
-                      
-                  </a>
-                </li>
-                <li className="page-item">
-                  <a
-                    href="#"
-                    className="page-link"
-                    onClick={(event) => {
-                      event.preventDefault();
-                      if(prop1 && categoryPage< pages-1){
-                        console.log(categoryPage+ " "+pages-1);
-                        changePage(categoryPage + 1);
-                      } 
-                      else if(!prop1 && currentPage< no_of_Pages-1){
-                         changePage(currentPage + 1);
-                      }
-                    }}
-                  >
-                    Next
-                  </a>
-                </li>
-              </ul>
+            <ul className="pagination" id="pagination">
+              <li className="page-item">
+                <a
+                  href="#"
+                  className="page-link"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    if (prop1 && categoryPage > 0) {
+                      changePage(categoryPage - 1);
+                    } else if (currentPage > 0) {
+                      changePage(currentPage - 1);
+                    }
+                  }}
+                >
+                  Previous
+                </a>
+              </li>
+              <li className={`page-item `}>
+                <a
+                  href="#"
+                  className="page-link"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    if (prop1) {
+                      changePage(categoryPage);
+                    } else {
+                      changePage(currentPage);
+                    }
+                  }}
+                >
+                  {prop1 ? categoryPage + 1 : currentPage + 1}
+                </a>
+              </li>
+              <li className="page-item">
+                <a
+                  href="#"
+                  className="page-link"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    if (prop1 && categoryPage < pages - 1) {
+                      console.log(categoryPage + " " + pages - 1);
+                      changePage(categoryPage + 1);
+                    } else if (!prop1 && currentPage < no_of_Pages - 1) {
+                      changePage(currentPage + 1);
+                    }
+                  }}
+                >
+                  Next
+                </a>
+              </li>
+            </ul>
           </div>
-
 
           <SnackbarComponent
             openSnackbar={openSnackbar}

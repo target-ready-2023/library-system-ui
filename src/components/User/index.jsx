@@ -25,7 +25,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import { styled } from "@mui/material/styles";
-import { useLocation ,useNavigate} from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const User = (data) => {
   const [users, setUsers] = useState([]);
@@ -37,25 +37,35 @@ const User = (data) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [userCount, setUserCount] = useState(0);
   const recordsPerPage = 5;
-  const nPage = Math.ceil(userCount/ recordsPerPage);
+  const nPage = Math.ceil(userCount / recordsPerPage);
 
-  localStorage.setItem("limit",userCount);
+  localStorage.setItem("limit", userCount);
 
   const location = useLocation();
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const [openDialogs, setOpenDialogs] = useState(
     Array(data?.length).fill(false)
   );
-  
+  const toSentenceCase = (str) => {
+    if (typeof str !== "string") return "";
+
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
   const changePage = (pageNumber) => {
     setCurrentPage(pageNumber);
-    console.log("page "+currentPage);
- };
+    console.log("page " + currentPage);
+  };
 
- const dataWithSerialNumber = users?.map((user, index) => ({
-  ...user,
-  serialNumber: currentPage*5 + (index+1),
-}));
+  const dataWithSerialNumber = users?.map((user, index) => ({
+    ...user,
+    serialNumber: currentPage * 5 + (index + 1),
+    user_role: toSentenceCase(user.user_role),
+  }));
 
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: "white",
@@ -66,28 +76,25 @@ const User = (data) => {
 
   const fetchUsers = async () => {
     try {
-        const response = await axios.get(
-          `http://localhost:8081/library_system/v3/users?page_number=${currentPage}`
-        );
-  
-        setUsers(response.data);
-        console.log(response.data);
+      const response = await axios.get(
+        `http://localhost:8081/library_system/v3/users?page_number=${currentPage}`
+      );
+
+      setUsers(response.data);
+      console.log(response.data);
       const responseUser = await axios.get(
         `http://localhost:8081/library_system/v3/users/total_count`
       );
       setUserCount(responseUser.data);
-        
     } catch (error) {
       console.error(error);
-      navigate("/notfound")
+      navigate("/notfound");
     }
-    
   };
 
   useEffect(() => {
     fetchUsers();
-  }, [currentPage,location]);
-
+  }, [currentPage, location]);
 
   const fetchBooksByUserId = async (user_id) => {
     try {
@@ -165,6 +172,22 @@ const User = (data) => {
     textAlign: "left",
     fontSize: "16px",
   };
+  const dialogContentStyles = {
+    maxHeight: "400px",
+    overflowY: "scroll",
+  };
+
+  const bookListStyles = {
+    paddingLeft: "0px",
+    listStyleType: "none",
+    marginBottom: 0,
+    fontSize: 17,
+  };
+
+  const bookListItemStyles = {
+    borderBottom: "1px solid #ddd",
+    padding: "5px",
+  };
 
   const actionButtonsStyles = {
     display: "flex",
@@ -174,11 +197,7 @@ const User = (data) => {
 
   return (
     <>
-      <Item>
-        <Icon>
-          <PeopleIcon />
-        </Icon>
-        {/* <Button
+      {/* <Button
           sx={{
             color: "black",
             fontSize: "12px",
@@ -190,9 +209,9 @@ const User = (data) => {
         >
           Users
         </Button> */}
-      </Item>
+
       <Card className="App-Card">
-        <h3>User directory</h3>
+        <h3 sx={{ fontWeight: "bold", fontFamily: "Arial" }}>USER DIRECTORY</h3>
         {/* <div style={containerStyles}>
           <Button variant="contained" onClick={handleOpenAddUserDialog}>
             Add User
@@ -226,25 +245,28 @@ const User = (data) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              
               {dataWithSerialNumber.map((user, index) => (
                 <TableRow key={user.user_id}>
                   <TableCell align="center">{user.serialNumber}</TableCell>
                   <TableCell align="center">{user.user_name}</TableCell>
                   <TableCell align="center">{user.user_role}</TableCell>
                   <TableCell align="center" style={tdStyles}>
-                    <div style={actionButtonsStyles} align="center">
-                      {/* <IconButton>
-                      <AddUser />
-                    </IconButton> */}
-                      <IconButton>
-                        <DeleteUser user={user} />
-                      </IconButton>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
                       <IconButton
                         onClick={() => handleOpen(index, user.user_id)}
                         color="primary"
+                        title={"Books issued by user"}
                       >
                         <VisibilityIcon />
+                      </IconButton>
+                      <IconButton>
+                        <DeleteUser user={user} />
                       </IconButton>
                     </div>
                     <Dialog
@@ -258,17 +280,42 @@ const User = (data) => {
                         },
                       }}
                     >
-                      <DialogTitle>Issued books:</DialogTitle>
-                      <DialogContent>
-                        <ul>
-                          {bookUser[user.user_id]?.map((bookName, idx) => (
-                            <li key={idx}>{bookName}</li>
-                          ))}
-                        </ul>
+                      <DialogTitle
+                        style={{
+                          fontSize: 18,
+                          fontWeight: "bold",
+                          fontFamily: "Arial",
+                          textDecoration: "underline",
+                        }}
+                      >
+                        BOOKS ISSUED BY USER
+                      </DialogTitle>
+                      <DialogContent style={dialogContentStyles}>
+                        {bookUser[user.user_id]?.length ? (
+                          <ul style={bookListStyles}>
+                            {bookUser[user.user_id].map((bookName, idx) => (
+                              <li key={idx} style={bookListItemStyles}>
+                                <span style={{ fontWeight: "bold" }}>{`${
+                                  idx + 1
+                                }.`}</span>{" "}
+                                {bookName}
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p style={{ color: "red", fontWeight: "bold" }}>
+                            No issued books
+                          </p>
+                        )}
                       </DialogContent>
+
                       <DialogActions>
                         <Button
                           onClick={() => handleClose(index)}
+                          style={{
+                            backgroundColor: "grey",
+                          }}
+                          variant="contained"
                           color="primary"
                         >
                           Close
@@ -278,7 +325,6 @@ const User = (data) => {
                   </TableCell>
                 </TableRow>
               ))}
-             
             </TableBody>
           </Table>
         </TableContainer>
@@ -308,18 +354,18 @@ const User = (data) => {
           </Alert>
         </Snackbar>
         <ul className="pagination">
-        <li className="page-item">
-          <a
-            href="#"
-            className="page-link"
-            onClick={() => {
-              if (currentPage > 0) changePage(currentPage - 1);
-            }}
-          >
-            previous
-          </a>
-        </li>
-        
+          <li className="page-item">
+            <a
+              href="#"
+              className="page-link"
+              onClick={() => {
+                if (currentPage > 0) changePage(currentPage - 1);
+              }}
+            >
+              previous
+            </a>
+          </li>
+
           <li className={`page-item `}>
             <a
               href="#"
@@ -329,20 +375,19 @@ const User = (data) => {
               {currentPage + 1}
             </a>
           </li>
-        
-        <li className="page-item">
-          <a
-            href="#"
-            className="page-link"
-            onClick={() => {
-              if (currentPage < nPage-1) changePage(currentPage + 1);
-            }}
-          >
-            Next
-          </a>
-        </li>
-      </ul>
 
+          <li className="page-item">
+            <a
+              href="#"
+              className="page-link"
+              onClick={() => {
+                if (currentPage < nPage - 1) changePage(currentPage + 1);
+              }}
+            >
+              Next
+            </a>
+          </li>
+        </ul>
       </Card>
     </>
   );

@@ -17,14 +17,14 @@ const AddUser = ({ handleCloseDialog, setSnackbarProps }) => {
   const [userId, setUserId] = useState("");
   const [userName, setUserName] = useState("");
   const [userRole, setUserRole] = useState("");
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const handleAddUser = async () => {
     if (!userId || !userName || !userRole) {
- // Check if any required field is empty
-        setSnackbarProps.setOpen(true);
-        setSnackbarProps.setMessage("Please fill in all fields.");
-        setSnackbarProps.setSeverity("error");
-        return;
+      // Check if any required field is empty
+      setSnackbarProps.setOpen(true);
+      setSnackbarProps.setMessage("Please fill in all fields.");
+      setSnackbarProps.setSeverity("error");
+      return;
     }
     try {
       const response = await axios.post(
@@ -47,8 +47,8 @@ const AddUser = ({ handleCloseDialog, setSnackbarProps }) => {
       if (error.response && error.response.status === 409) {
         const errorMessage = error.response.data.message;
         setSnackbarProps.setOpen(true);
-      setSnackbarProps.setMessage(errorMessage); 
-      setSnackbarProps.setSeverity("error");
+        setSnackbarProps.setMessage(errorMessage);
+        setSnackbarProps.setSeverity("error");
       } else {
         console.error("Error adding user:", error);
       }
@@ -58,7 +58,9 @@ const AddUser = ({ handleCloseDialog, setSnackbarProps }) => {
 
   return (
     <>
-      <DialogTitle>Add User</DialogTitle>
+      <DialogTitle sx={{ fontWeight: "bold", fontFamily: "Arial" }}>
+        NEW USER DETAILS
+      </DialogTitle>
       <DialogContent>
         <TextField
           label="User ID"
@@ -66,7 +68,8 @@ const AddUser = ({ handleCloseDialog, setSnackbarProps }) => {
           onChange={(e) => setUserId(e.target.value)}
           fullWidth
           required
-          margin="normal"
+          style={{ marginTop: "5px", marginBottom: "10px" }}
+          inputProps={{ autoComplete: "off" }}
         />
         <TextField
           label="User Name"
@@ -74,9 +77,10 @@ const AddUser = ({ handleCloseDialog, setSnackbarProps }) => {
           onChange={(e) => setUserName(e.target.value)}
           fullWidth
           required
-          margin="normal"
+          style={{ marginBottom: "10px" }}
+          inputProps={{ autoComplete: "off" }}
         />
-        <InputLabel>User Role</InputLabel>
+        <InputLabel style={{ color: "black" }}>User Role</InputLabel>
         <Select
           value={userRole}
           onChange={(e) => setUserRole(e.target.value)}
@@ -89,10 +93,24 @@ const AddUser = ({ handleCloseDialog, setSnackbarProps }) => {
         </Select>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleCloseDialog} color="primary">
+        <Button
+          onClick={handleCloseDialog}
+          style={{
+            backgroundColor: "grey",
+            padding: "6px 8px",
+            fontSize: "14px",
+          }}
+          variant="contained"
+          color="primary"
+        >
           Cancel
         </Button>
-        <Button onClick={handleAddUser} color="primary">
+        <Button
+          onClick={handleAddUser}
+          style={{ marginRight: "3.5%", backgroundColor: "#6c88c8" }}
+          variant="contained"
+          color="primary"
+        >
           Add
         </Button>
       </DialogActions>

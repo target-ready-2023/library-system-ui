@@ -1,12 +1,14 @@
 import Logo from "../Logo";
-import './header.css';
+import "./header.css";
 
 const Header = () => {
   return (
     <>
-      <header  className="App-header">
+      <header className="App-header">
         <Logo />
-        <h2>Digital Library</h2>
+        <h1 style={{ fontStyle: "Arial", marginLeft: "10px" }}>
+          Digital Library
+        </h1>
       </header>
     </>
   );
