@@ -27,7 +27,7 @@ import Home from "../Home";
 const useStyles = makeStyles((theme) => ({
   customButton: {
     height: "auto",
-    // Add more custom styles here as needed
+
   },
 }));
 
@@ -44,11 +44,9 @@ const Category = () => {
 
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const recordsPerPage = 10;
-  const lastIndex = (currentPage + 1) * recordsPerPage;
-  const firstIndex = lastIndex - recordsPerPage;
-  const records = data.slice(firstIndex, lastIndex);
-  const nPage = Math.ceil(data.length / recordsPerPage);
+  const [categoryCount, setCategoryCount] = useState(0);
+  const recordsPerPage = 5;
+  const nPage = Math.ceil(categoryCount/ recordsPerPage);
   const [open, setOpen] = useState(false);
   const [responseMessage, setResponseMessage] = useState("");
 
@@ -56,15 +54,6 @@ const Category = () => {
     categoryName: "",
   });
 
-  const generatePaginationNumbers = () => {
-    const numbers = [];
-    for (let i = 1; i <= nPage; i++) {
-      numbers.push(i);
-    }
-    return numbers;
-  };
-
-  const Numbers = generatePaginationNumbers();
 
   const changePage = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -112,7 +101,7 @@ const Category = () => {
 
   const dataWithSerialNumber = data?.map((item, index) => ({
     ...item,
-    serialNumber: currentPage*10 + (index+1),
+    serialNumber: currentPage*5 + (index+1),
   }));
 
   const tableContainerStyles = {
@@ -149,17 +138,27 @@ const Category = () => {
     gap: "0.5px", // Reduce the gap between icons here
   };
 
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8081/library_system/v2/categories?page_number=${currentPage}`
+      );
+      setData(response.data);
+        console.log(response.data);
+      const responseCategory = await axios.get(
+        `http://localhost:8081/library_system/v2/categories/total_count`
+      );
+      setCategoryCount(responseCategory.data);
+        
+    } catch (error) {
+      console.error(error);
+      navigate("/notfound")
+    }
+    
+  };
+
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8081/library_system/v2/categories?page_number=${currentPage}`
-        );
-        setData(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
 
     fetchData();
   },[currentPage]);
@@ -210,20 +209,17 @@ const Category = () => {
             previous
           </a>
         </li>
-        {Numbers.map((number, index) => (
-          <li
-            className={`page-item ${currentPage === number ? "active" : ""}`}
-            key={index}
-          >
+        
+          <li className={`page-item `}>
             <a
               href="#"
               className="page-link"
-              onClick={() => changePage(number)}
+              onClick={() => changePage(currentPage)}
             >
               {currentPage + 1}
             </a>
           </li>
-        ))}
+        
         <li className="page-item">
           <a
             href="#"

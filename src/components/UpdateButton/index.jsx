@@ -12,21 +12,23 @@ import {
   CircularProgress,
   Typography,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { Edit } from "@mui/icons-material";
 import axios from "axios";
 import { ClickAwayListener } from "@mui/material";
 
 const UpdateButton = ({ item, showSnackbar }) => {
+  
   const [isUpdateFormOpen, setIsUpdateFormOpen] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
   const [categoryNames, setCategoryNames] = useState([]);
   const [newCategory, setNewCategory] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
-
+  const navigate=useNavigate();
   const [book, setBook] = useState({
     bookName: "",
     bookDescription: "",
-    publicationYear: 0,
+    publicationYear: 2023,
     authorName: "",
   });
 
@@ -98,7 +100,7 @@ const UpdateButton = ({ item, showSnackbar }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsUpdating(true);
-
+    
     const data = {
       book: {
         ...book,
@@ -114,11 +116,15 @@ const UpdateButton = ({ item, showSnackbar }) => {
       .put(updateApiUrl, data)
       .then((response) => {
         console.log("Book updated successfully.");
+        
         showSnackbar(
           `Book with Sl. No. ${item.serialNumber} updated successfully!`,
-          "success"
+          "success",20000
         );
+        
         handleCloseUpdateForm();
+        // window.location.reload();
+        navigate("/home");
       })
       .catch((error) => {
         console.error("Error updating the book:", error.message);
@@ -139,6 +145,7 @@ const UpdateButton = ({ item, showSnackbar }) => {
       .finally(() => {
         setIsUpdating(false);
       });
+      
   };
 
   return (

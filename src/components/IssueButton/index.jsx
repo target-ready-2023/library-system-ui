@@ -17,9 +17,9 @@ const IssueButton = ({ item, updateBookCount }) => {
   const [data, setData] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isDialogOpen, setDialogOpen] = useState(false);
-  const { userId,setUserId } = useContext(UserContext);
-  
-
+ // const { userId,setUserId } = useContext(UserContext);
+ const userId=localStorage.getItem("userId");
+  const userName=localStorage.getItem("userName");
   const handleCloseConfirmation = () => {
     setDialogOpen(false);
   };
@@ -38,38 +38,43 @@ const IssueButton = ({ item, updateBookCount }) => {
       },
       body: JSON.stringify(issueData),  
     })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        console.log(response);
-        console.log(response.data);
-        console.log("Book Issued successfully.");
-        setSnackbarMessage(`Book Issued successfully for ${userId}.`);
-        setSnackbarSeverity("success");
-        setOpenSnackbar(true);
-        setData((prevData) =>
-          prevData.filter((book) => book.book_id !== book_id)
-        );
-        setDrawerOpen(false);
-        updateBookCount(book_id);
-      })
+    .then(async (response) => {
+      const responseData = await response.json();
+      console.log("response data "+responseData);
+      if (!response.ok) {
+          throw new Error(responseData.message);
+      }
+
+      return responseData;
+  })
+  .then((responseData) => {
+      // Handle success here
+      console.log("Book Issued successfully:", responseData);
+      setSnackbarMessage(`Book Issued successfully to ${userName}!`);
+      // setSnackbarMessage(`Book Returned successfully by ${userName}!`);
+      console.log(responseData);
+      setSnackbarSeverity("success");
+      setOpenSnackbar(true);
+      setData((prevData) =>
+        prevData.filter((book) => book.book_id !== book_id)
+      );
+      setDrawerOpen(false);
+      updateBookCount(book_id);
+  })
+     
       .catch((error) => {
-        if (error.response && error.response.status === 409) {
-          const errorData = error.response.data;
-          const errorMessage = errorData.message; // Assuming the error message is the response body
-          setSnackbarMessage(errorMessage);
-          setSnackbarSeverity("error");
-          setOpenSnackbar(true);
-          // resetForm();
-          
+        if (error.message) {
+            console.log("Error message:", error.message);
+            setSnackbarMessage(error.message);
+            setSnackbarSeverity("error");
+            setOpenSnackbar(true);
+        } else {
+            console.error("An unknown error occurred:", error);
+            setSnackbarMessage(error);
+            setSnackbarSeverity("error");
+            setOpenSnackbar(true);
         }
-        else{
-        console.error(`Error Issuing the book for user ${userId}:`, error.message);
-        setSnackbarMessage(`Error Issuing the book for user ${userId}:`);
-        setSnackbarSeverity("error");
-        setOpenSnackbar(true);}
-      });
+    });
       setDialogOpen(false);
   };
 
@@ -128,7 +133,4 @@ const IssueButton = ({ item, updateBookCount }) => {
 };
 
 export default IssueButton;
-
-
-
 

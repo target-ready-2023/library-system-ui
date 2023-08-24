@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import UserContext from '../UserContext';
 import AddUser from "../AddUser";
+
 import {
   Button,
   FormControl,
@@ -19,7 +20,7 @@ const useStyles = {
     margin: 16,
     minWidth: 120,
     maxWidth: 1500,
-    width: "30%",
+    width: "80%",
   },
   select: {
     height: "100%",
@@ -27,11 +28,26 @@ const useStyles = {
   button: {
     margin: 16,
   },
+  blurBackground: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0.5, 0.5, 0.5)", 
+    backdropFilter: "blur(2px)", 
+    zIndex: 1,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
 };
 export const LandingPage = () => {
   const navigate = useNavigate();
 
   const [selectedOption, setSelectedOption] = useState("");
+  const [selectedUserName,setSelectedUserName] = useState("");
+  // const [userName,setUserName] = useState("");
   const [data, setData] = useState([]);
   const { userId,setUserId } = useContext(UserContext);
   const [openAddUserDialog, setOpenAddUserDialog] = useState(false);
@@ -39,7 +55,7 @@ export const LandingPage = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   localStorage.setItem("userId", selectedOption);
-  
+  localStorage.setItem("userName", selectedUserName);
   const handleOpenAddUserDialog = () => {
     setOpenAddUserDialog(true);
   };
@@ -48,34 +64,54 @@ export const LandingPage = () => {
     setOpenAddUserDialog(false);
   };
 
+  // const fetchData = async () => {
+  //   const response = await axios.get(
+  //     `http://localhost:8081/library_system/v3/users`
+  //   );
+  //   setData(response.data);
+  // };
+
   const fetchData = async () => {
-    const response = await axios.get(
-      `http://localhost:8081/library_system/v3/users`
-    );
-    setData(response.data);
-  };
+    axios
+      .get(`http://localhost:8081/library_system/v3/AllUsers`)
+      .then((response) => {
+        console.log("Response from the server:", response.data);
+        setData(response.data);
+      })
+      .catch((error) => {
+        console.error("Error posting data:", error);
+        if (error.response && error.response.status === 404) {
+          const errorData = error.response.data;
+          const errorMessage = errorData.message;
+          setSnackbarOpen(true);
+          setSnackbarMessage(errorMessage);
+          setSnackbarSeverity("error");
+        }
+      });
+  };
 
   useEffect(() => {
     fetchData();
   }, []);
   const handleOptionChange = (event) => {
-    
-    setSelectedOption(event.target.value);
-   
+    const combinedValue = event.target.value;
+    const [selectedOptionValue, selectedUserNameValue] = combinedValue.split('-');
+    setSelectedOption(selectedOptionValue);
+    setSelectedUserName(selectedUserNameValue);
   };
   console.log("selected option " + selectedOption);
+  console.log("userName " + selectedUserName);
 
   const handleNavigation = () => {
-
     console.log(selectedOption);
     setUserId(selectedOption);
-    
+    // setUserName(selectedUserName); 
     navigate("/home");
   };
 
   return (
-    
-    
+   //  <div style={useStyles.blurBackground}>
+
       <div
         style={{
           display: "flex",
@@ -96,15 +132,16 @@ export const LandingPage = () => {
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              value={selectedOption}
               onChange={handleOptionChange}
+              value={selectedUserName}
               style={useStyles.select}
             >
-              {data.map((user) => (
-                <MenuItem key={user.user_id} value={user.user_id}>
-                  {user.user_name}
-                </MenuItem>
-              ))}
+            {data.map((user) => (
+              <MenuItem key={user.user_id} value={`${user.user_id}-${user.user_name}`}>
+                {user.user_name}
+              </MenuItem>
+            ))}
+
             </Select>
           </FormControl>
 
@@ -153,6 +190,6 @@ export const LandingPage = () => {
 
         </Card>
       </div>
-    
+   // </div>
   );
 };
