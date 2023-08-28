@@ -18,13 +18,12 @@ import axios from "axios";
 import { ClickAwayListener } from "@mui/material";
 
 const UpdateButton = ({ item, showSnackbar }) => {
-  
   const [isUpdateFormOpen, setIsUpdateFormOpen] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
   const [categoryNames, setCategoryNames] = useState([]);
   const [newCategory, setNewCategory] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const [book, setBook] = useState({
     bookName: "",
     bookDescription: "",
@@ -100,7 +99,7 @@ const UpdateButton = ({ item, showSnackbar }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsUpdating(true);
-    
+
     const data = {
       book: {
         ...book,
@@ -116,12 +115,9 @@ const UpdateButton = ({ item, showSnackbar }) => {
       .put(updateApiUrl, data)
       .then((response) => {
         console.log("Book updated successfully.");
-        
-        showSnackbar(
-          `Book with Sl. No. ${item.serialNumber} updated successfully!`,
-          "success",20000
-        );
-        
+
+        showSnackbar(`Book updated successfully!`, "success", 20000);
+
         handleCloseUpdateForm();
         // window.location.reload();
         navigate("/home");
@@ -145,7 +141,6 @@ const UpdateButton = ({ item, showSnackbar }) => {
       .finally(() => {
         setIsUpdating(false);
       });
-      
   };
 
   return (
@@ -273,7 +268,7 @@ const UpdateButton = ({ item, showSnackbar }) => {
         <DialogActions>
           <Button
             onClick={handleCloseUpdateForm}
-            style={{ backgroundColor: "#6c88c8" }}
+            style={{ backgroundColor: "grey" }}
             variant="contained"
             color="primary"
           >

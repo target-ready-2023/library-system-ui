@@ -1,22 +1,22 @@
 import { Delete } from "@mui/icons-material";
 import React, { useEffect, useState } from "react";
-import { Button, Snackbar, Alert, IconButton} from "@mui/material";
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import { useNavigate,useLocation} from "react-router-dom";
-const DeleteUser = ({ user}) => {
-    
+import { Button, Snackbar, Alert, IconButton } from "@mui/material";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import { useNavigate, useLocation } from "react-router-dom";
+
+const DeleteUser = ({ user }) => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-  
+
   const [data, setData] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isDialogOpen, setDialogOpen] = useState(false);
-  const navigate= useNavigate();
+  const navigate = useNavigate();
   const handleCloseConfirmation = () => {
     setDialogOpen(false);
   };
@@ -30,25 +30,26 @@ const DeleteUser = ({ user}) => {
       },
     })
       .then((response) => {
-        console.log(response)
-        if(response.status===409){
-            console.log("user cannot be deleted")
-            setSnackbarMessage("User Canoot be Deleted Untill User returns the book!");
-            setSnackbarSeverity("error");
-            setOpenSnackbar(true);
-        }
-        else{
-            if (!response.ok) {
-              throw new Error("Network response was not ok");
-            }
-            console.log("User deleted successfully.");
-            setSnackbarMessage("User Deleted successfully!");
-            setSnackbarSeverity("success");
-            setOpenSnackbar(true);
-            setData((prevData) =>
-              prevData.filter((user) => user.user_id !== user_id)
-            );
-            setDrawerOpen(false);
+        console.log(response);
+        if (response.status === 409) {
+          console.log("user cannot be deleted");
+          setSnackbarMessage(
+            "User Cannot be Deleted without returning all the issued books!"
+          );
+          setSnackbarSeverity("error");
+          setOpenSnackbar(true);
+        } else {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          console.log("User deleted successfully.");
+          setSnackbarMessage("User Deleted successfully!");
+          setSnackbarSeverity("success");
+          setOpenSnackbar(true);
+          setData((prevData) =>
+            prevData.filter((user) => user.user_id !== user_id)
+          );
+          setDrawerOpen(false);
         }
       })
       .catch((error) => {
@@ -57,8 +58,8 @@ const DeleteUser = ({ user}) => {
         setSnackbarSeverity("error");
         setOpenSnackbar(true);
       });
-      handleCloseConfirmation();
-      navigate("/user");
+    handleCloseConfirmation();
+    navigate("/user");
   };
 
   const handleDelete = () => {
@@ -67,7 +68,6 @@ const DeleteUser = ({ user}) => {
       return;
     }
     setDialogOpen(true);
- 
   };
 
   const handleCloseSnackbar = (event, reason) => {
@@ -79,31 +79,41 @@ const DeleteUser = ({ user}) => {
 
   return (
     <div>
-      <IconButton color="primary" title = {"Delete User"} onClick={handleDelete}>
+      <IconButton color="primary" title={"Delete User"} onClick={handleDelete}>
         <Delete />
       </IconButton>
 
       <Dialog open={isDialogOpen} onClose={handleCloseConfirmation}>
-      <DialogTitle>Are you sure you want to delete this user?</DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          This action cannot be undone.
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleCloseConfirmation} color="primary">
-          No
-        </Button>
-        <Button onClick={() =>deleteUsers(user.user_id)} color="primary" autoFocus>
-          Yes
-        </Button>
-      </DialogActions>
-    </Dialog>
+        <DialogTitle sx={{ fontWeight: "bold", fontFamily: "Arial" }}>
+          Are you sure you want to delete this user?
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>This action cannot be undone.</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleCloseConfirmation}
+            style={{ backgroundColor: "grey" }}
+            variant="contained"
+            color="primary"
+          >
+            No
+          </Button>
+          <Button
+            onClick={() => deleteUsers(user.user_id)}
+            variant="contained"
+            color="primary"
+            style={{ marginRight: "10px", backgroundColor: "#6c88c8" }}
+          >
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
         open={openSnackbar}
-        autoHideDuration={3000}
+        autoHideDuration={6000}
         onClose={handleCloseSnackbar}
       >
         <Alert
@@ -116,7 +126,5 @@ const DeleteUser = ({ user}) => {
       </Snackbar>
     </div>
   );
-
-   
-}
+};
 export default DeleteUser;

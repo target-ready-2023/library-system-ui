@@ -40,10 +40,10 @@ export default function RowAndColumnSpacing() {
     navigate("/category");
   };
   const handleUser = () => {
-    navigate('/user');
-  }
-  const userId=localStorage.getItem("userId");
-  console.log("layout "+userId);
+    navigate("/user");
+  };
+  const userId = localStorage.getItem("userId");
+  console.log("layout " + userId);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -89,7 +89,7 @@ export default function RowAndColumnSpacing() {
             </Item>
           </div>
         </Grid>
-        
+
         <Grid item xs={12} p={1}>
           <div>
             <Item>
@@ -114,9 +114,9 @@ export default function RowAndColumnSpacing() {
         </Grid>
 
         <Grid item xs={12} p={1}>
-        <AddButton showSnackbar={showSnackbar} />
+          <AddButton showSnackbar={showSnackbar} />
         </Grid>
-        
+
         <Grid item xs={12} p={1}>
           <Item>
             <Icon>

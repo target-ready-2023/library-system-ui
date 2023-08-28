@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Button, Snackbar, Alert, IconButton} from "@mui/material";
+import { Button, Snackbar, Alert, IconButton } from "@mui/material";
 import { Delete } from "@mui/icons-material";
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import { useNavigate } from "react-router-dom";
 
-const DeleteButton = ({ item, updateData}) => {
-
+const DeleteButton = ({ item, updateData, showSnackbar }) => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   const [data, setData] = useState([]);
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const [isDialogOpen, setDialogOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleCloseConfirmation = () => {
     setDialogOpen(false);
@@ -35,22 +35,20 @@ const DeleteButton = ({ item, updateData}) => {
           throw new Error("Network response was not ok");
         }
         console.log("Book deleted successfully.");
-        setSnackbarMessage("Book Deleted successfully!");
-        setSnackbarSeverity("success");
-        setOpenSnackbar(true);
+        showSnackbar("Book Deleted Successfully!", "success");
+
         setData((prevData) =>
           prevData.filter((book) => book.book_id !== book_id)
         );
-        setDrawerOpen(false);
+
         updateData();
+        // navigate("/home");
       })
       .catch((error) => {
         console.error("Error deleting the book:", error.message);
-        setSnackbarMessage("Error deleting Book");
-        setSnackbarSeverity("error");
-        setOpenSnackbar(true);
+        showSnackbar("Error deleting the book:", "error");
       });
-      handleCloseConfirmation();
+    handleCloseConfirmation();
   };
 
   const handleDelete = () => {
@@ -59,7 +57,6 @@ const DeleteButton = ({ item, updateData}) => {
       return;
     }
     setDialogOpen(true);
- 
   };
 
   const handleCloseSnackbar = (event, reason) => {
@@ -71,26 +68,36 @@ const DeleteButton = ({ item, updateData}) => {
 
   return (
     <div>
-      <IconButton color="primary" title = {"Delete Book"} onClick={handleDelete}>
+      <IconButton color="primary" title={"Delete Book"} onClick={handleDelete}>
         <Delete />
       </IconButton>
 
       <Dialog open={isDialogOpen} onClose={handleCloseConfirmation}>
-      <DialogTitle>Are you sure you want to delete this book?</DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          This action cannot be undone.
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleCloseConfirmation} color="primary">
-          No
-        </Button>
-        <Button onClick={() =>deleteBook(item.book_id)} color="primary" autoFocus>
-          Yes
-        </Button>
-      </DialogActions>
-    </Dialog>
+        <DialogTitle sx={{ fontWeight: "bold", fontFamily: "Arial" }}>
+          Are you sure you want to delete this book?
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>This action cannot be undone.</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleCloseConfirmation}
+            style={{ backgroundColor: "grey" }}
+            variant="contained"
+            color="primary"
+          >
+            No
+          </Button>
+          <Button
+            onClick={() => deleteBook(item.book_id)}
+            variant="contained"
+            color="primary"
+            style={{ marginRight: "10px", backgroundColor: "#6c88c8" }}
+          >
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "right" }}

@@ -51,7 +51,6 @@ const TableComponent = ({ data, currentPage, updateData }) => {
   //   setSortedData(sortedBooks);
   // }, [data]);
 
-  
   const handleOpen = (index) => {
     const newOpenDialogs = [...openDialogs];
     newOpenDialogs[index] = true;
@@ -68,10 +67,10 @@ const TableComponent = ({ data, currentPage, updateData }) => {
     ...item,
     serialNumber: currentPage * 5 + (index + 1),
   }));
-//   const dataWithSerialNumber = sortedData.map((item, index) => ({
-//     ...item,
-//     serialNumber: index + 1, // Start from 1 for the latest edited book
-//   }));
+  //   const dataWithSerialNumber = sortedData.map((item, index) => ({
+  //     ...item,
+  //     serialNumber: index + 1, // Start from 1 for the latest edited book
+  //   }));
 
   const showSnackbar = (message, severity) => {
     setSnackbarMessage(message);
@@ -243,7 +242,11 @@ const TableComponent = ({ data, currentPage, updateData }) => {
                       <VisibilityIcon />
                     </IconButton>
                     <UpdateButton item={item} showSnackbar={showSnackbar} />
-                    <DeleteButton item={item} updateData={updateData} />
+                    <DeleteButton
+                      item={item}
+                      updateData={updateData}
+                      showSnackbar={showSnackbar}
+                    />
                     <IssueButton
                       item={item}
                       updateBookCount={updateBookCount}
@@ -264,7 +267,14 @@ const TableComponent = ({ data, currentPage, updateData }) => {
                       },
                     }}
                   >
-                    <DialogTitle style={{ fontWeight: "bold", font: "Arial" }}>
+                    <DialogTitle
+                      style={{
+                        fontSize: 18,
+                        fontWeight: "bold",
+                        fontFamily: "Arial",
+                        textDecoration: "underline",
+                      }}
+                    >
                       BOOK DETAILS
                     </DialogTitle>
                     <DialogContent
@@ -339,7 +349,9 @@ const TableComponent = ({ data, currentPage, updateData }) => {
                     <DialogActions>
                       <Button
                         onClick={() => handleClose(index)}
-                        style={{ backgroundColor: "#6c88c8" }}
+                        style={{
+                          backgroundColor: "grey",
+                        }}
                         variant="contained"
                         color="primary"
                       >
